@@ -16,7 +16,7 @@ mod tests {
     async fn test_send_event_success_production() {
         let result = send_event(
             "test_event",
-            "Test message",
+            "test-events.rs/test_send_event_success_production",
             Some("completed"),
             BASE_URL,
             API_KEY,

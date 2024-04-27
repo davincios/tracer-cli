@@ -1,21 +1,52 @@
-name: Rust
+name: Rust CI
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - master # Trigger on pushes to master
+      - develop # Trigger on pushes to develop
   pull_request:
-    branches: ["master"]
+    branches:
+      - master # Trigger on pull requests to master
+      - develop # Trigger on pull requests to develop
 
 env:
-  CARGO_TERM_COLOR: always
+  CARGO_TERM_COLOR: always # Ensures colored output in GitHub Actions logs
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest # Specifies the runner
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # Checks out the repository under $GITHUB_WORKSPACE, so workflow can access it
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable # Specifies to use the stable Rust toolchain
+          profile: minimal # Minimizes installation components to reduce setup time
+          override: true # Ensures this toolchain is used for all Rust commands
+
+      - name: Cache Cargo Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Build
-        run: cargo build --verbose
+        run: cargo build --verbose # Compiles the package and all of its dependencies
+
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo test --verbose # Runs tests
+
+      - name: Check Formatting
+        run: cargo fmt -- --check # Checks formatting of the code base to ensure it's in the correct style
+
+      - name: Lint with Clippy
+        run: cargo clippy -- -D warnings # Runs Clippy to catch common mistakes and improve your Rust code

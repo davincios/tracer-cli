@@ -4,7 +4,7 @@ use anyhow::{Context, Result};
 use std::io::Write;
 
 pub mod events;
-pub use events::{finish_pipeline, init_pipeline, send_event};
+pub use events::{finish_pipeline, init_pipeline, send_event, EventStatus};
 
 /// Performs line-by-line matching to find lines containing the specified pattern.
 pub fn find_matches(content: &str, pattern: &str, mut writer: impl Write) -> Result<()> {

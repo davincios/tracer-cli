@@ -2,14 +2,12 @@ use reqwest::Client;
 use serde_json::json;
 use std::{fs, io::Write};
 
-// Constants for API configuration
-const API_KEY: &str = "dDRE5rxJEjktQxCtzsYyz";
-
 pub async fn send_event(
     event_type: &str,
     message: &str,
     event_status: Option<&str>,
     base_url: &str,
+    api_key: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new();
     let data = json!({
@@ -23,7 +21,7 @@ pub async fn send_event(
 
     let response = client
         .post(base_url)
-        .header("x-api-key", API_KEY)
+        .header("x-api-key", api_key)
         .header("Content-Type", "application/json")
         .json(&data)
         .send()
@@ -41,22 +39,28 @@ pub async fn send_event(
 pub async fn init_pipeline(
     run_name: String,
     base_url: &str,
+    api_key: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     send_event(
         "init",
         &format!("Initialized pipeline run with name: {}", run_name),
         None,
         base_url,
+        api_key,
     )
     .await
 }
 
-pub async fn finish_pipeline(base_url: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn finish_pipeline(
+    base_url: &str,
+    api_key: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     send_event(
         "finished_installation",
         "Pipeline run concluded.",
         None,
         base_url,
+        api_key,
     )
     .await
 }

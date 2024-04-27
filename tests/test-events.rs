@@ -6,6 +6,7 @@
 use tracer_cli::send_event;
 
 const BASE_URL: &str = "https://app.tracer.bio/api/fluent-bit-webhook";
+const API_KEY: &str = "dDRE5rxJEjktQxCtzsYyz";
 
 #[cfg(test)]
 mod tests {
@@ -17,7 +18,8 @@ mod tests {
             "test_event",
             "Test message",
             Some("completed"),
-            BASE_URL, // Change to BASE_URL_PRODUCTION if you want to test against production
+            BASE_URL,
+            API_KEY,
         )
         .await;
         assert!(result.is_ok());

@@ -30,6 +30,8 @@ impl AppConfig {
             config.api_key = key.to_string();
         }
 
+        config.base_url = "https://app.tracer.bio/api/fluent-bit-webhook".to_string();
+
         // Create the client and include it in the returned AppConfig
         let client = Arc::new(Client::new());
         config.client = client;

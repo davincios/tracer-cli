@@ -1,7 +1,10 @@
-use anyhow::Result;
+/// main.rs
+use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
-use tokio; // Assuming you are using Tokio for async runtime
-use tracer_cli::{pipeline_new_run, AppConfig};
+
+// use serde::{Deserialize, Serialize};
+// use std::{fs, path::PathBuf};
+use tracer_cli::{pipeline_new_run, setup_tracer, AppConfig, TracerProjectConfig};
 
 // Define the CLI structure using `clap`
 #[derive(Parser)]
@@ -18,13 +21,14 @@ struct Cli {
 // Define the subcommands
 #[derive(Subcommand)]
 enum Commands {
+    /// Setup tracing with API key
+    Setup { api_key: String },
     /// Start tracing
-    Start { api_key: String },
+    Start,
     /// Log a message with a type
     Log {
         #[clap(long)]
         r#type: String,
-
         message: String,
     },
     /// End tracing
@@ -36,18 +40,23 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Start { api_key } => start(&api_key).await,
+        Commands::Setup { api_key } => setup_tracer(&api_key).await,
+        Commands::Start => start().await,
         Commands::Log { r#type, message } => log(r#type, message),
-        Commands::End => end(),
+        Commands::End => end().await,
     }
 }
 
-async fn start(api_key: &str) -> Result<()> {
+async fn start() -> Result<()> {
     println!("Starting tracer...");
-    let config = AppConfig::new(Some(api_key)).expect("Failed to load configuration.");
+    let config = TracerProjectConfig::load()?;
+    let api_key = config.api_key;
 
-    pipeline_new_run(&config, "[CLI] Starting pipeline run").await?;
-    println!("Started piepline run successfully...");
+    let app_config =
+        AppConfig::new(Some(&api_key)).context("Failed to load configuration during start.")?;
+
+    pipeline_new_run(&app_config, "[CLI] Starting pipeline run").await?;
+    println!("Started pipeline run successfully...");
 
     Ok(())
 }
@@ -57,7 +66,14 @@ fn log(log_type: String, message: String) -> Result<()> {
     Ok(())
 }
 
-fn end() -> Result<()> {
+async fn end() -> Result<()> {
     println!("Ending tracer session...");
+    let config = TracerProjectConfig::load()?;
+    let api_key = config.api_key;
+
+    let app_config =
+        AppConfig::new(Some(&api_key)).context("Failed to load configuration during end.")?;
+
+    pipeline_new_run(&app_config, "[CLI] Ending pipeline run").await?;
     Ok(())
 }

@@ -29,7 +29,7 @@ impl TracerProjectConfig {
         let path = TracerProjectConfig::get_path()?;
         let contents =
             serde_json::to_string(&self).with_context(|| "Failed to serialize config")?;
-        fs::write(&path, &contents)
+        fs::write(&path, contents)
             .with_context(|| format!("Failed to write config file at {:?}", path))?;
         // Set file permissions to read/write for owner, and read for group (e.g., chmod 640)
         let mut perms = fs::metadata(&path)?.permissions();

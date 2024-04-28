@@ -8,23 +8,30 @@
 
 - wget https://github.com/davincios/tracer-cli/releases/download/v0.0.14/tracer_cli-x86_64-unknown-linux-gnu.tar.gz
 - tar -xzf tracer_cli-x86_64-unknown-linux-gnu.tar.gz
+- sudo mkdir -p /etc/tracer/
+- sudo cp tracer_cli /etc/tracer/tracer_cli
 
-## Todos
+## Adding to path
 
-- setup moves the cli automatically to temp
-- add to path as "tracer" instead of tracer_cli
+- echo 'export PATH="$PATH:/etc/tracer"' >> ~/.bashrc
+- echo 'alias tracer="tracer_cli"' >> ~/.bashrc
+- source ~/.bashrc
+- tracer --version
 
 ## Example usage
 
-- tracer_cli --help
-- tracer_cli --version
-- tracer_cli setup <API_KEY_HERE>
-- tracer_cli start
-- tracer_cli log --type warning QC mapping reads GC content below 53% threshold
-- tracer_cli tool BWA_MEM2 1.1
+- tracer --help
+- tracer --version
+- tracer setup <API_KEY_HERE>
+- tracer start
+- tracer log --type warning QC mapping reads GC content below 53% threshold
+- tracer tool BWA_MEM2 1.1
 
 ## Todos
 
+- setup moves the binary automatically to /etc/tracer AND creates a directory there
+- do not automatically print the results (api key save and path updated) for tracer setup <API_KEY>
+- add to path as "tracer" instead of tracer_cli
 - Write tests for to communicate API pipeline steps: initialise pipeline, tool_used, log metric, custom message, alrt and finish pipeline run.
 - Make it work locally
 - Have CI/CD deployment pipeline

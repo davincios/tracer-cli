@@ -9,6 +9,7 @@ use add_to_path::add_tracer_path_to_env;
 #[derive(Serialize, Deserialize)]
 pub struct TracerProjectConfig {
     pub api_key: String,
+    pub base_path: String,
 }
 
 impl TracerProjectConfig {
@@ -46,6 +47,7 @@ impl TracerProjectConfig {
 pub async fn setup_tracer(api_key: &str) -> Result<()> {
     let config = TracerProjectConfig {
         api_key: api_key.to_string(),
+        base_path: "https://app.tracer.bio/api/fluent-bit-webhook".to_string(),
     };
     config.save()?;
     let path = TracerProjectConfig::get_path()?;

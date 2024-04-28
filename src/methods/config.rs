@@ -13,14 +13,19 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn new(api_key: Option<&str>) -> Result<Self, ConfigError> {
-        // Start by loading the configuration from a file
-        let settings = Config::builder()
-            .add_source(
-                File::with_name("Settings")
-                    .required(false)
-                    .format(FileFormat::Toml),
-            )
-            .build()?;
+        // Initialize the configuration builder and set default values
+        let mut settings = Config::builder()
+            .set_default("base_url", "https://app.tracer.bio/api/fluent-bit-webhook")?;
+
+        // Add configuration file source which may override defaults
+        settings = settings.add_source(
+            File::with_name("Settings")
+                .required(false)
+                .format(FileFormat::Toml),
+        );
+
+        // Build the final config, applying file settings over defaults
+        let settings = settings.build()?;
 
         // Deserialize the configuration into AppConfig, excluding the client
         let mut config: AppConfig = settings.try_deserialize()?;
@@ -29,8 +34,6 @@ impl AppConfig {
         if let Some(key) = api_key {
             config.api_key = key.to_string();
         }
-
-        config.base_url = "https://app.tracer.bio/api/fluent-bit-webhook".to_string();
 
         // Create the client and include it in the returned AppConfig
         let client = Arc::new(Client::new());

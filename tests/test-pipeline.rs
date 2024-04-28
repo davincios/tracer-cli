@@ -2,7 +2,7 @@
 mod tests {
     use anyhow::Result;
     use tracer_cli::methods::{AppConfig, Tool};
-    use tracer_cli::{log_message, pipeline_finish, pipeline_init, tool_process};
+    use tracer_cli::{log_message, pipeline_finish_run, pipeline_new_run, tool_process};
 
     async fn setup() -> AppConfig {
         AppConfig::new().expect("Failed to load configuration for test.")
@@ -13,7 +13,7 @@ mod tests {
         let config = setup().await;
 
         // Init pipeline
-        pipeline_init(&config, "Starting pipeline run").await?;
+        pipeline_new_run(&config, "Starting pipeline run").await?;
 
         // Process using tool
         let tool = Tool {
@@ -27,7 +27,7 @@ mod tests {
         log_message(&config, "Pipeline run status").await?;
 
         // Finish pipeline
-        pipeline_finish(&config).await?;
+        pipeline_finish_run(&config).await?;
 
         Ok(())
     }

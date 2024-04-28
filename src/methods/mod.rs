@@ -16,7 +16,7 @@ pub struct Tool {
     pub flags: Vec<String>,
 }
 
-pub async fn pipeline_init(config: &AppConfig, msg: &str) -> Result<()> {
+pub async fn pipeline_new_run(config: &AppConfig, msg: &str) -> Result<()> {
     send_event(
         config,
         EventStatus::NewRun.as_str(),
@@ -51,7 +51,7 @@ pub async fn log_message(config: &AppConfig, message: &str) -> Result<()> {
     .await
 }
 
-pub async fn pipeline_finish(config: &AppConfig) -> Result<()> {
+pub async fn pipeline_finish_run(config: &AppConfig) -> Result<()> {
     send_event(
         config,
         EventStatus::FinishedRun.as_str(),

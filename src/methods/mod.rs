@@ -13,7 +13,6 @@ pub use config::AppConfig;
 pub struct Tool {
     pub name: String,
     pub version: String,
-    pub flags: Vec<String>,
 }
 
 pub async fn pipeline_new_run(config: &AppConfig, msg: &str) -> Result<()> {
@@ -28,8 +27,7 @@ pub async fn pipeline_new_run(config: &AppConfig, msg: &str) -> Result<()> {
 
 pub async fn tool_process(config: &AppConfig, tool: &Tool) -> Result<()> {
     let properties = json!({
-        "tool_version": tool.version,
-        "flags": tool.flags
+        "tool_version": tool.version
     });
 
     send_event(

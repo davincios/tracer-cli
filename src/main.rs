@@ -36,7 +36,6 @@ enum Commands {
     Tool {
         name: String,
         version: String,
-        flags: Vec<String>,
     },
     End,
 }
@@ -50,11 +49,7 @@ async fn main() -> Result<()> {
         Commands::Start => start().await,
         Commands::Log { r#type, message } => log(r#type, message).await,
         Commands::End => end().await,
-        Commands::Tool {
-            name,
-            version,
-            flags,
-        } => tool(name, version, flags).await,
+        Commands::Tool { name, version } => tool(name, version).await,
     }
 }
 
@@ -72,13 +67,9 @@ async fn start() -> Result<()> {
     Ok(())
 }
 
-async fn tool(name: String, version: String, flags: Vec<String>) -> Result<()> {
+async fn tool(name: String, version: String) -> Result<()> {
     println!("Processing tool...");
-    let tool = Tool {
-        name,
-        version,
-        flags,
-    };
+    let tool = Tool { name, version };
     let config = TracerProjectConfig::load()?;
     let api_key = config.api_key;
 

@@ -17,7 +17,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tracer_cli_sequence() -> Result<()> {
+    fn test_tracer_cli_setup() -> Result<()> {
         // Set up the API key for the tests
         let api_key_setup = run_command(&["setup", "dDRE5rxJEjktQxCtzsYyz"]).output()?;
         assert!(
@@ -25,15 +25,22 @@ mod tests {
             "Setup failed: {}",
             str::from_utf8(&api_key_setup.stderr)?
         );
+        Ok(())
+    }
 
-        // Test 'start'
+    #[test]
+    fn test_tracer_cli_start() -> Result<()> {
         let output_start = run_command(&["start"]).output()?;
         assert!(
             output_start.status.success(),
             "Start failed: {}",
             str::from_utf8(&output_start.stderr)?
         );
+        Ok(())
+    }
 
+    #[test]
+    fn test_tracer_cli_log() -> Result<()> {
         // Test 'log'
         let output_log = run_command(&[
             "log",
@@ -47,7 +54,24 @@ mod tests {
             "Logging failed: {}",
             str::from_utf8(&output_log.stderr)?
         );
+        Ok(())
+    }
 
+    #[test]
+    fn test_tracer_cli_tool() -> Result<()> {
+        // Test 'tool'
+        // please fix the following issue:
+
+        let output_tool = run_command(&["tool", "BWA_MEM2", "1.0"]).output()?;
+        assert!(
+            output_tool.status.success(),
+            "Tool command failed: {}",
+            str::from_utf8(&output_tool.stderr)?
+        );
+        Ok(())
+    }
+    #[test]
+    fn test_tracer_cli_end() -> Result<()> {
         // Test 'end'
         let output_end = run_command(&["end"]).output()?;
         assert!(
@@ -55,7 +79,6 @@ mod tests {
             "End failed: {}",
             str::from_utf8(&output_end.stderr)?
         );
-
         Ok(())
     }
 }

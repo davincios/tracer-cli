@@ -80,16 +80,17 @@ jobs:
           tag_name: ${{ github.ref }}
           draft: false
           prerelease: false
+      - name: Upload macOS Binary to Release
+        uses: softprops/action-gh-release@v2.0.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ./binaries/macos/macOS-binary.zip
+
       - name: Upload Ubuntu Binary to Release
         uses: softprops/action-gh-release@v2.0.4
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: Linux-binary.zip
-      - name: Upload macOS Binary to Release
-        uses: softprops/action-gh-release@v2.0.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: macOS-binary.zip
+          files: ./binaries/ubuntu/Linux-binary.zip

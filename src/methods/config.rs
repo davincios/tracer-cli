@@ -1,4 +1,4 @@
-use config::{ConfigBuilder, ConfigError, File, FileFormat};
+use config::{Config, ConfigError, File, FileFormat};
 use reqwest::Client;
 use serde::Deserialize;
 use std::sync::Arc;
@@ -12,22 +12,28 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-    pub fn new() -> Result<Self, ConfigError> {
-        // Explicitly starting with the default state
-        let builder = ConfigBuilder::<config::builder::DefaultState>::default().add_source(
-            File::with_name("Settings")
-                .required(false)
-                .format(FileFormat::Toml),
-        );
-        let settings = builder.build()?;
-        let config: AppConfig = settings.try_deserialize()?;
+    pub fn new(api_key: Option<&str>) -> Result<Self, ConfigError> {
+        // Start by loading the configuration from a file
+        let settings = Config::builder()
+            .add_source(
+                File::with_name("Settings")
+                    .required(false)
+                    .format(FileFormat::Toml),
+            )
+            .build()?;
+
+        // Deserialize the configuration into AppConfig, excluding the client
+        let mut config: AppConfig = settings.try_deserialize()?;
+
+        // Optionally override the api_key if one is provided
+        if let Some(key) = api_key {
+            config.api_key = key.to_string();
+        }
 
         // Create the client and include it in the returned AppConfig
         let client = Arc::new(Client::new());
-        Ok(AppConfig {
-            base_url: config.base_url,
-            api_key: config.api_key,
-            client,
-        })
+        config.client = client;
+
+        Ok(config)
     }
 }

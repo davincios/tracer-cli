@@ -71,17 +71,23 @@ jobs:
           name: macOS-binary
           path: binaries/macos
 
+      - name: List files in the macOS binary directory
+        run: ls -lah binaries/macos/
+      - name: List files in the Ubuntu binary directory
+        run: ls -lah binaries/ubuntu/
+
       - name: Upload macOS Binary to Release
         uses: softprops/action-gh-release@v2.0.4
         with:
           # files: /home/runner/work/tracer-cli/binaries/macos/macOS-binary.zip
-          files: /target/release/tracer_cli/macOS-binary.zip
+          # files: /target/release/tracer_cli/macOS-binary.zip
+          files: binaries/macos/macOS-binary.zip
 
       - name: Upload Ubuntu Binary to Release
         uses: softprops/action-gh-release@v2.0.4
         with:
-          # files: /home/runner/work/tracer-cli/binaries/ubuntu/Linux-binary.zip
-          files: /target/release/tracer_cli/Linux-binary.zip
+          # files: /target/release/tracer_cli/Linux-binary.zip
+          files: binaries/ubuntu/Linux-binary.zip
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -19,25 +19,12 @@ jobs:
     runs-on: ubuntu-latest # Specifies the runner
 
     steps:
-      - uses: actions/checkout@v4 # Checks out the repository under $GITHUB_WORKSPACE, so workflow can access it
+      - uses: actions/checkout@v4.1.4
 
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable # Specifies to use the stable Rust toolchain
-          profile: minimal # Minimizes installation components to reduce setup time
-          override: true # Ensures this toolchain is used for all Rust commands
+      - run: rustup toolchain install stable --profile minimal
 
-      - name: Cache Cargo Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2.7.3
 
       - name: Build
         run: cargo build --verbose # Compiles the package and all of its dependencies

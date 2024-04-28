@@ -19,7 +19,7 @@ pub struct Tool {
 pub async fn pipeline_init(config: &AppConfig, msg: &str) -> Result<()> {
     send_event(
         config,
-        &EventStatus::NewRun.as_str(),
+        EventStatus::NewRun.as_str(),
         &format!("Initialized pipeline run with name: {}", msg),
         None,
     )
@@ -34,7 +34,7 @@ pub async fn tool_process(config: &AppConfig, tool: &Tool) -> Result<()> {
 
     send_event(
         config,
-        &EventStatus::ToolExecution.as_str(),
+        EventStatus::ToolExecution.as_str(),
         &format!("Tool process: {}", tool.name),
         Some(properties),
     )
@@ -44,7 +44,7 @@ pub async fn tool_process(config: &AppConfig, tool: &Tool) -> Result<()> {
 pub async fn log_message(config: &AppConfig, message: &str) -> Result<()> {
     send_event(
         config,
-        &EventStatus::RunStatusMessage.as_str(),
+        EventStatus::RunStatusMessage.as_str(),
         message,
         None,
     )
@@ -54,7 +54,7 @@ pub async fn log_message(config: &AppConfig, message: &str) -> Result<()> {
 pub async fn pipeline_finish(config: &AppConfig) -> Result<()> {
     send_event(
         config,
-        &EventStatus::FinishedRun.as_str(),
+        EventStatus::FinishedRun.as_str(),
         "Pipeline run concluded successfully",
         None,
     )

@@ -1,54 +1,54 @@
-name: Rust CI
+# name: Rust CI
 
-on:
-  push:
-    branches:
-      - master # Trigger on pushes to master
-      - develop # Trigger on pushes to develop
-    tags:
-      - "v*" # Trigger on version tags like v1.0, v1.0.1, etc.
-  pull_request:
-    branches:
-      - master # Trigger on pull requests to master
-      - develop # Trigger on pull requests to develop
+# on:
+#   push:
+#     branches:
+#       - master # Trigger on pushes to master
+#       - develop # Trigger on pushes to develop
+#     tags:
+#       - "v*" # Trigger on version tags like v1.0, v1.0.1, etc.
+#   pull_request:
+#     branches:
+#       - master # Trigger on pull requests to master
+#       - develop # Trigger on pull requests to develop
 
-env:
-  CARGO_TERM_COLOR: always # Ensures colored output in GitHub Actions logs
+# env:
+#   CARGO_TERM_COLOR: always # Ensures colored output in GitHub Actions logs
 
-jobs:
-  build-test-and-release:
-    name: Build, Test, and Release on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-      fail-fast: false
+# jobs:
+#   build-test-and-release:
+#     name: Build, Test, and Release on ${{ matrix.os }}
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, macos-latest]
+#       fail-fast: false
 
-    steps:
-      - uses: actions/checkout@v4.1.4
+#     steps:
+#       - uses: actions/checkout@v4.1.4
 
-      - name: Setup Rust toolchain
-        run: rustup toolchain install stable --profile minimal
+#       - name: Setup Rust toolchain
+#         run: rustup toolchain install stable --profile minimal
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.7.3
+#       - name: Rust Cache
+#         uses: Swatinem/rust-cache@v2.7.3
 
-      - name: Build
-        run: cargo build --release --verbose
+#       - name: Build
+#         run: cargo build --release --verbose
 
-      - name: Run tests
-        run: cargo test --verbose
+#       - name: Run tests
+#         run: cargo test --verbose
 
-      - name: Check Formatting
-        run: cargo fmt -- --check
+#       - name: Check Formatting
+#         run: cargo fmt -- --check
 
-      - name: Lint with Clippy
-        run: cargo clippy -- -D warnings
+#       - name: Lint with Clippy
+#         run: cargo clippy -- -D warnings
 
-      - name: Create and Upload Release
-        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2.0.4
-        with:
-          files: ./target/release/tracer_cli
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Create and Upload Release
+#         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
+#         uses: softprops/action-gh-release@v2.0.4
+#         with:
+#           files: ./target/release/tracer_cli
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

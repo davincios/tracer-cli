@@ -56,7 +56,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_setup_sets_api_key() -> Result<()> {
-        let test_api_key = "test_dDRE5rxJEjktQxCtzsYyz";
+        let test_api_key = "test_123";
         setup_tracer(test_api_key).await?;
 
         let config = TracerProjectConfig::load()?;

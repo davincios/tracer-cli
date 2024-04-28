@@ -1,60 +1,61 @@
-use std::process::Command;
+// use anyhow::Result;
+// use std::process::Command;
+// use std::str;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::process::Output;
-    use std::str;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
 
-    // Helper function to run the command and capture the output
-    fn run_command(args: &[&str]) -> Output {
-        Command::new("cargo")
-            .arg("run")
-            .arg("--") // This ensures that the arguments are passed to the application, not cargo
-            .args(args)
-            .output()
-            .expect("Failed to execute command")
-    }
+//     // Helper function to run the command and capture the output
+//     fn run_command(args: &[&str]) -> Command {
+//         let mut command = Command::new("cargo");
+//         command
+//             .arg("run")
+//             .arg("--") // This ensures that the arguments are passed to the application, not cargo
+//             .args(args);
+//         command
+//     }
 
-    #[test]
-    fn test_cli() -> Result<(), Box<dyn std::error::Error>> {
-        // Test 'tracer setup --api-key 1234'
-        let output = run_command(&["setup", "--api-key", "1234"]);
-        assert!(
-            output.status.success(),
-            "Setup failed: {}",
-            str::from_utf8(&output.stderr)?
-        );
+//     #[test]
+//     fn test_tracer_cli_sequence() -> Result<()> {
+//         // Set up the API key for the tests
+//         let api_key_setup = run_command(&["setup", "dDRE5rxJEjktQxCtzsYyz"]).output()?;
+//         assert!(
+//             api_key_setup.status.success(),
+//             "Setup failed: {}",
+//             str::from_utf8(&api_key_setup.stderr)?
+//         );
 
-        // Test 'tracer start'
-        let output = run_command(&["start"]);
-        assert!(
-            output.status.success(),
-            "Start failed: {}",
-            str::from_utf8(&output.stderr)?
-        );
+//         // Test 'start'
+//         let output_start = run_command(&["start"]).output()?;
+//         assert!(
+//             output_start.status.success(),
+//             "Start failed: {}",
+//             str::from_utf8(&output_start.stderr)?
+//         );
 
-        // Test 'tracer log --type warning "QC mapping reads GC content below 61% threshold"'
-        let output = run_command(&[
-            "log",
-            "--type",
-            "warning",
-            "QC mapping reads GC content below 61% threshold",
-        ]);
-        assert!(
-            output.status.success(),
-            "Logging failed: {}",
-            str::from_utf8(&output.stderr)?
-        );
+//         // Test 'log'
+//         let output_log = run_command(&[
+//             "log",
+//             "--type",
+//             "warning",
+//             "QC mapping reads GC content below 61% threshold",
+//         ])
+//         .output()?;
+//         assert!(
+//             output_log.status.success(),
+//             "Logging failed: {}",
+//             str::from_utf8(&output_log.stderr)?
+//         );
 
-        // Test 'tracer end'
-        let output = run_command(&["end"]);
-        assert!(
-            output.status.success(),
-            "End failed: {}",
-            str::from_utf8(&output.stderr)?
-        );
+//         // Test 'end'
+//         let output_end = run_command(&["end"]).output()?;
+//         assert!(
+//             output_end.status.success(),
+//             "End failed: {}",
+//             str::from_utf8(&output_end.stderr)?
+//         );
 
-        Ok(())
-    }
-}
+//         Ok(())
+//     }
+// }

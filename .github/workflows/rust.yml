@@ -77,9 +77,11 @@ jobs:
         run: ls binaries/ubuntu/
 
       - name: List files in the macOS/tracer-cli directory
-        run: ls binaries/macos/tracer_cli
+        # this returns empty list
+        run: ls -lah binaries/macos/tracer_cli
       - name: List files in the Ubuntu/tracer-cli binary directory
-        run: ls binaries/ubuntu/tracer_cli
+        # this returns empty list
+        run: ls -lah binaries/ubuntu/tracer_cli
 
       - name: Upload macOS Binary to Release
         uses: softprops/action-gh-release@v2.0.4
@@ -96,10 +98,3 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: List files in the target/release/tracer-cli directory
-        run: ls -lah target/release/tracer-cli
-      - name: List files in the target/release/tracer-cli directory
-        run: ls -lah target/release
-      - name: List files release
-        run: ls target/release

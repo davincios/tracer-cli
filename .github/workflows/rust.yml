@@ -46,6 +46,7 @@ jobs:
         run: cargo clippy -- -D warnings
 
       - name: Upload Release Binary
+        id: upload-release-binary
         uses: actions/upload-artifact@v4.3.3
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
         with:
@@ -62,12 +63,12 @@ jobs:
       - name: Download Ubuntu Binary
         uses: actions/download-artifact@v4.1.7
         with:
-          name: ubuntu-latest-binary
+          name: Linux-binary
           path: binaries/ubuntu
       - name: Download macOS Binary
         uses: actions/download-artifact@v4.1.7
         with:
-          name: macos-latest-binary
+          name: macOS-binary
           path: binaries/macos
       - uses: actions/create-release@v1
         id: create_release

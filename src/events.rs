@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use reqwest::Client;
 use serde_json::json;
 use std::{fs, io::Write}; // Using anyhow for error handling

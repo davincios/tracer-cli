@@ -46,11 +46,11 @@ jobs:
         run: cargo clippy -- -D warnings
 
       - name: Upload Release Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.3.3
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
         with:
           name: ${{ runner.os }}-binary
-          path: target/release/my_binary_name # Update this to your actual binary path
+          path: target/release/tracer_cli
 
   create-release:
     name: Create Release
@@ -59,12 +59,14 @@ jobs:
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4.1.4
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
+
         with:
           name: Ubuntu-latest-binary
           path: binaries
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/upload-artifact@v4.3.3
+
         with:
           name: macOS-latest-binary
           path: binaries

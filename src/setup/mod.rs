@@ -1,5 +1,7 @@
 use anyhow::{Context, Result};
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use std::{env, fs, os::unix::fs::PermissionsExt, path::PathBuf};
 
 mod add_to_path;
@@ -9,7 +11,9 @@ use add_to_path::setup_tracer_cli_path;
 #[derive(Serialize, Deserialize)]
 pub struct TracerProjectConfig {
     pub api_key: String,
-    pub base_path: String,
+    pub base_url: String,
+    #[serde(skip)]
+    pub client: Arc<Client>, // Using Arc to easily share the client across threads
 }
 
 impl TracerProjectConfig {
@@ -25,8 +29,12 @@ impl TracerProjectConfig {
         let path = TracerProjectConfig::get_path()?;
         let contents = fs::read_to_string(&path)
             .with_context(|| format!("Failed to read config file at {:?}", path))?;
-        let config = serde_json::from_str(&contents)
+        let config: TracerProjectConfig = serde_json::from_str(&contents)
             .with_context(|| "Failed to deserialize the config file")?;
+
+        let client = Arc::new(Client::new());
+        let mut config = config;
+        config.client = client;
         Ok(config)
     }
 
@@ -47,7 +55,8 @@ impl TracerProjectConfig {
 pub async fn setup_tracer(api_key: &str) -> Result<()> {
     let config = TracerProjectConfig {
         api_key: api_key.to_string(),
-        base_path: "https://app.tracer.bio/api/fluent-bit-webhook".to_string(),
+        base_url: "https://app.tracer.bio/api/fluent-bit-webhook".to_string(),
+        client: Arc::new(Client::new()),
     };
     config.save()?;
     let path = TracerProjectConfig::get_path()?;

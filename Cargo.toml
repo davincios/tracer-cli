@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Vincent Hus <developers@tracer.bio>"]
 edition = "2018"
 
+
 # Define the library
 [lib]
 name = "tracer_cli"

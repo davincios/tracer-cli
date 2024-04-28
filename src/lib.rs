@@ -5,6 +5,7 @@ pub use methods::{
     log_message, pipeline_finish_run, pipeline_new_run, tool_process, AppConfig, Tool,
 };
 
-pub mod cli;
+pub mod setup;
 
-pub use cli::setup::{setup_tracer, TracerProjectConfig};
+pub use setup::{setup_tracer, TracerProjectConfig};
+pub mod cli;

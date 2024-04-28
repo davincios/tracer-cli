@@ -74,14 +74,12 @@ jobs:
       - name: Upload macOS Binary to Release
         uses: softprops/action-gh-release@v2.0.4
         with:
-          # files: ./binaries/macos/macOS-binary.zip
-          files: /home/runner/work/tracer-cli/tracer-cli/binaries/macos/macOS-binary.zip
+          files: /home/runner/work/tracer-cli/binaries/macos/macOS-binary.zip
 
       - name: Upload Ubuntu Binary to Release
         uses: softprops/action-gh-release@v2.0.4
         with:
-          # files: ./binaries/ubuntu/Linux-binary.zip
-          files: /home/runner/work/tracer-cli/tracer-cli/binaries/ubuntu/Linux-binary.zip
+          files: /home/runner/work/tracer-cli/binaries/ubuntu/Linux-binary.zip
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

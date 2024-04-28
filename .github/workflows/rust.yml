@@ -85,7 +85,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ./binaries/macos/macOS-binary.zip
+          # files: ./binaries/macos/macOS-binary.zip
+          files: /home/runner/work/tracer-cli/tracer-cli/binaries/macos/macOS-binary.zip
 
       - name: Upload Ubuntu Binary to Release
         uses: softprops/action-gh-release@v2.0.4
@@ -93,4 +94,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ./binaries/ubuntu/Linux-binary.zip
+          # files: ./binaries/ubuntu/Linux-binary.zip
+          files: /home/runner/work/tracer-cli/tracer-cli/binaries/ubuntu/Linux-binary.zip

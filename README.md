@@ -9,12 +9,9 @@
 - wget https://github.com/davincios/tracer-cli/releases/download/v0.0.14/tracer_cli-x86_64-unknown-linux-gnu.tar.gz
 - tar -xzf tracer_cli-x86_64-unknown-linux-gnu.tar.gz
 
-## Add to path // need to fix
-
-Todos:
+## Todos
 
 - setup moves the cli automatically to temp
-- add standard base_url
 - add to path as "tracer" instead of tracer_cli
 
 ## Example usage

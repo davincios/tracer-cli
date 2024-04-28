@@ -2,6 +2,10 @@ use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::{env, fs, os::unix::fs::PermissionsExt, path::PathBuf};
 
+mod add_to_path;
+
+use add_to_path::add_tracer_path_to_env;
+
 #[derive(Serialize, Deserialize)]
 pub struct TracerProjectConfig {
     pub api_key: String,
@@ -46,6 +50,7 @@ pub async fn setup_tracer(api_key: &str) -> Result<()> {
     config.save()?;
     let path = TracerProjectConfig::get_path()?;
     println!("API key saved to {:?}", path);
+    add_tracer_path_to_env().await?;
     Ok(())
 }
 

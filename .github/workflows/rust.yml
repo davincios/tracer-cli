@@ -45,14 +45,10 @@ jobs:
       - name: Lint with Clippy
         run: cargo clippy -- -D warnings
 
-      - name: Zip Binary
-        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
-        run: zip -j ./binary.zip ./target/release/tracer_cli
-
       - name: Create and Upload Release
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2.0.4
         with:
-          files: ./binary.zip
+          files: ./target/release/tracer_cli
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

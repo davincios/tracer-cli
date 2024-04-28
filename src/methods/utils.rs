@@ -12,12 +12,15 @@ pub fn log_response(response: &str, log_file: &str) -> Result<()> {
     Ok(())
 }
 
-pub async fn handle_response(response: reqwest::Response, event_type: &str) -> Result<()> {
+pub async fn handle_response(response: reqwest::Response, process_status: &str) -> Result<()> {
     let status_code = response.status();
     let response_text = response.text().await?;
 
-    log_response(&response_text, &format!("./responses/{}.log", event_type))
-        .context("Failed to log response")?;
+    log_response(
+        &response_text,
+        &format!("./responses/{}.log", process_status),
+    )
+    .context("Failed to log response")?;
 
     if status_code == StatusCode::OK {
         println!("Status Code: {}, Response: {}", status_code, response_text);

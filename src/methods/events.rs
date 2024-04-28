@@ -1,7 +1,9 @@
 use anyhow::Result;
 use serde_json::{json, Value};
 
-use super::{config::AppConfig, utils::handle_response};
+use crate::AppConfig;
+
+use super::utils::handle_response;
 
 #[derive(Debug)]
 pub enum EventStatus {
@@ -25,24 +27,22 @@ impl EventStatus {
 pub async fn send_event(
     // keep send_event private
     config: &AppConfig,
-    event_type: &str,
+    process_status: &str,
     message: &str,
-    event_status: Option<EventStatus>,
-    properties: Option<Value>,
+    attributes: Option<Value>,
 ) -> Result<()> {
-    let status_str = event_status.map_or("", |status| status.as_str());
     let mut data = json!({
         "logs": [{
             "message": message,
-            "event_type": event_type,
+            "event_type": "process_status",
             "process_type": "pipeline",
-            "process_status": status_str,
+            "process_status": process_status,
         }]
     });
 
-    // Add properties if provided
-    if let Some(props) = properties {
-        data["logs"][0]["properties"] = props;
+    // Add attributes if provided
+    if let Some(props) = attributes {
+        data["logs"][0]["attributes"] = props;
     }
 
     let response = config
@@ -54,5 +54,5 @@ pub async fn send_event(
         .send()
         .await?;
 
-    handle_response(response, event_type).await
+    handle_response(response, process_status).await
 }

@@ -11,17 +11,16 @@ mod utils;
 pub use config::AppConfig;
 
 pub struct Tool {
-    name: String,
-    version: String,
-    flags: Vec<String>,
+    pub name: String,
+    pub version: String,
+    pub flags: Vec<String>,
 }
 
 pub async fn pipeline_init(config: &AppConfig, msg: &str) -> Result<()> {
     send_event(
         config,
-        "init",
+        &EventStatus::NewRun.as_str(),
         &format!("Initialized pipeline run with name: {}", msg),
-        Some(EventStatus::NewRun),
         None,
     )
     .await
@@ -35,9 +34,8 @@ pub async fn tool_process(config: &AppConfig, tool: &Tool) -> Result<()> {
 
     send_event(
         config,
-        "process_status",
+        &EventStatus::ToolExecution.as_str(),
         &format!("Tool process: {}", tool.name),
-        Some(EventStatus::ToolExecution),
         Some(properties),
     )
     .await
@@ -46,9 +44,8 @@ pub async fn tool_process(config: &AppConfig, tool: &Tool) -> Result<()> {
 pub async fn log_message(config: &AppConfig, message: &str) -> Result<()> {
     send_event(
         config,
-        "log_message",
+        &EventStatus::RunStatusMessage.as_str(),
         message,
-        Some(EventStatus::RunStatusMessage),
         None,
     )
     .await
@@ -57,9 +54,8 @@ pub async fn log_message(config: &AppConfig, message: &str) -> Result<()> {
 pub async fn pipeline_finish(config: &AppConfig) -> Result<()> {
     send_event(
         config,
-        "finished_installation",
-        "Pipeline run concluded.",
-        Some(EventStatus::FinishedRun),
+        &EventStatus::FinishedRun.as_str(),
+        "Pipeline run concluded successfully",
         None,
     )
     .await

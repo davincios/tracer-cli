@@ -15,13 +15,17 @@ env:
 
 jobs:
   build-and-test:
-    name: Build and Test
-    runs-on: ubuntu-latest # Specifies the runner
+    name: Build and Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4.1.4
 
-      - run: rustup toolchain install stable --profile minimal
+      - name: Setup Rust toolchain
+        run: rustup toolchain install stable --profile minimal
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2.7.3

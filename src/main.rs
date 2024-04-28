@@ -1,17 +1,10 @@
 // src/main.rs
+use clap::Parser;
 
 use anyhow::{Context, Result};
-use clap::Parser;
-use tracer_cli::find_matches;
-
-/// Command line arguments definition using Clap.
-#[derive(Parser)]
-struct Cli {
-    /// The pattern to look for
-    pattern: String,
-    /// The path to the file to read
-    path: std::path::PathBuf,
-}
+pub mod cli;
+use cli::find_matches;
+use cli::Cli;
 
 fn main() -> Result<()> {
     let args = Cli::parse();

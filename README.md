@@ -8,11 +8,11 @@
 
 - wget https://github.com/davincios/tracer-cli/releases/download/v0.0.14/tracer_cli-x86_64-unknown-linux-gnu.tar.gz
 - tar -xzf tracer_cli-x86_64-unknown-linux-gnu.tar.gz
-- sudo mkdir -p /etc/tracer/
-- sudo cp tracer_cli /etc/tracer/tracer_cli
 
 ## Adding to path
 
+- sudo mkdir -p /etc/tracer/
+- sudo cp tracer_cli /etc/tracer/tracer_cli
 - echo 'export PATH="$PATH:/etc/tracer"' >> ~/.bashrc
 - echo 'alias tracer="tracer_cli"' >> ~/.bashrc
 - source ~/.bashrc

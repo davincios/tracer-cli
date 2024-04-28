@@ -59,21 +59,18 @@ jobs:
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4.1.4
-      - uses: actions/download-artifact@v4.1.7
-
+      - name: Download Ubuntu Binary
+        uses: actions/download-artifact@v4.1.7
         with:
-          name: Ubuntu-latest-binary
-          path: binaries
-
-      - uses: actions/upload-artifact@v4.3.3
-
+          name: ubuntu-latest-binary
+          path: binaries/ubuntu
+      - name: Download macOS Binary
+        uses: actions/download-artifact@v4.1.7
         with:
-          name: macOS-latest-binary
-          path: binaries
-
-      - name: Create Release
+          name: macos-latest-binary
+          path: binaries/macos
+      - uses: actions/create-release@v1
         id: create_release
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -81,23 +78,21 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Binaries
+      - name: Upload Ubuntu Binary to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./binaries/Ubuntu-latest-binary
+          asset_path: ./binaries/ubuntu/ubuntu-latest-binary
           asset_name: Ubuntu-binary
           asset_content_type: application/octet-stream
-
-      - name: Upload Release Binaries
+      - name: Upload macOS Binary to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./binaries/macOS-latest-binary
+          asset_path: ./binaries/macos/macos-latest-binary
           asset_name: macOS-binary
           asset_content_type: application/octet-stream

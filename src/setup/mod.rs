@@ -1,89 +1,79 @@
-use anyhow::{Context, Result};
-use reqwest::Client;
-use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use std::{env, fs, os::unix::fs::PermissionsExt, path::PathBuf};
+use anyhow::{anyhow, Result};
+use std::fs;
+use std::os::unix::fs::PermissionsExt;
+use std::path::PathBuf;
+use std::process::Command;
 
-mod add_to_path;
+mod config;
+pub use config::TracerConfig;
 
-use add_to_path::setup_config_tracer;
-
-#[derive(Serialize, Deserialize)]
-pub struct TracerProjectConfig {
-    pub api_key: String,
-    pub base_url: String,
-    #[serde(skip)]
-    pub client: Arc<Client>, // Using Arc to easily share the client across threads
+// Helper function to create a directory with permissions
+fn create_config_directory(path: &PathBuf) -> Result<()> {
+    if !path.exists() {
+        fs::create_dir_all(path)?;
+        fs::set_permissions(path, fs::Permissions::from_mode(0o700))?; // Permissions for owner only
+    }
+    Ok(())
 }
 
-impl TracerProjectConfig {
-    pub fn get_path() -> Result<PathBuf> {
-        let base_path = env::var("TRACER_CONFIG_DIR").unwrap_or_else(|_| "/tmp/tracer".to_string());
-        let mut path = PathBuf::from(base_path);
-        fs::create_dir_all(&path)?; // Ensure the directory exists
-        path.push("config.json");
-        Ok(path)
-    }
-
-    pub fn load() -> Result<Self> {
-        let path = TracerProjectConfig::get_path()?;
-        let contents = fs::read_to_string(&path)
-            .with_context(|| format!("Failed to read config file at {:?}", path))?;
-        let config: TracerProjectConfig = serde_json::from_str(&contents)
-            .with_context(|| "Failed to deserialize the config file")?;
-
-        let client = Arc::new(Client::new());
-        let mut config = config;
-        config.client = client;
-        Ok(config)
-    }
-
-    pub fn save(&self) -> Result<()> {
-        let path = TracerProjectConfig::get_path()?;
-        let contents =
-            serde_json::to_string(&self).with_context(|| "Failed to serialize config")?;
-        fs::write(&path, contents)
-            .with_context(|| format!("Failed to write config file at {:?}", path))?;
-        // Set file permissions to read/write for owner, and read for group (e.g., chmod 640)
-        let mut perms = fs::metadata(&path)?.permissions();
-        perms.set_mode(0o640); // Owner read/write, group read, others no access
-        fs::set_permissions(&path, perms)?;
-        Ok(())
-    }
+// Helper function to setup configuration
+fn setup_configuration(api_key: String, binary_path: PathBuf) -> Result<TracerConfig> {
+    let mut config = TracerConfig::new(api_key)?;
+    config.installation_tracer_binary_path = binary_path;
+    config.save_config()?;
+    Ok(config)
 }
 
-pub async fn setup_tracer(api_key: &str) -> Result<()> {
-    let config = TracerProjectConfig {
-        api_key: api_key.to_string(),
-        base_url: "https://app.tracer.bio/api/fluent-bit-webhook".to_string(),
-        client: Arc::new(Client::new()),
-    };
-    config.save()?;
-    let path = TracerProjectConfig::get_path()?;
-    println!("API key saved to {:?}", path);
-    setup_config_tracer().await?;
+// Helper function to check tracer version
+fn check_tracer_version(tracer_path: &PathBuf) -> Result<String> {
+    let output = Command::new(tracer_path).arg("--version").output()?;
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+pub async fn setup_tracer(api_key: String) -> Result<()> {
+    let tracer_initial_binary_path = PathBuf::from("/usr/local/bin/tracer");
+    let tracer_config_dir = PathBuf::from("/etc/tracer");
+
+    create_config_directory(&tracer_config_dir)?;
+    let config = setup_configuration(api_key, tracer_initial_binary_path)?;
+    let version = check_tracer_version(&config.installation_tracer_binary_path)?;
+    println!("Tracer Version: {}", version);
+
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tokio;
 
     #[tokio::test]
-    async fn test_setup_sets_api_key() -> Result<()> {
-        let test_api_key = "dDRE5rxJEjktQxCtzsYyz";
-        setup_tracer(test_api_key).await?;
+    async fn test_create_config_directory() -> Result<()> {
+        let test_dir = PathBuf::from("/tmp/test_tracer");
+        create_config_directory(&test_dir)?;
+        assert!(test_dir.exists());
+        fs::remove_dir_all(test_dir)?; // Cleanup
+        Ok(())
+    }
 
-        let config = TracerProjectConfig::load()?;
-        assert_eq!(
-            config.api_key, test_api_key,
-            "The API key set by setup does not match the expected test API key."
-        );
+    #[tokio::test]
+    async fn test_setup_configuration() -> Result<()> {
+        let test_binary_path = PathBuf::from("/usr/local/bin/tracer");
+        let config = setup_configuration("test_api_key".to_string(), test_binary_path)?;
+        assert_eq!(config.api_key, "test_api_key");
+        Ok(())
+    }
 
-        let path = TracerProjectConfig::get_path()?;
-        print!("API key saved to {:?}", path);
+    #[tokio::test]
+    async fn test_check_tracer_version() -> Result<()> {
+        let test_binary_path = PathBuf::from("/usr/local/bin/tracer");
+        let version = check_tracer_version(&test_binary_path)?;
+        assert!(!version.is_empty());
+        Ok(())
+    }
 
+    #[tokio::test]
+    async fn test_tracer_setup() -> Result<()> {
+        setup_tracer("test_api_key".to_string()).await?;
         Ok(())
     }
 }

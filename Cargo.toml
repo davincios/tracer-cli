@@ -26,6 +26,7 @@ config = "0.13"
 tokio-util = "0.6.8"
 tokio-tungstenite = "0.13.0"
 dirs = "3.0"
+tempfile = "3.10.1"
 
 
 [dev-dependencies]

@@ -6,11 +6,9 @@ mod tests {
     use anyhow::Result;
     use tokio;
     use tracer::methods::Tool;
-    use tracer::{
-        log_message, pipeline_finish_run, pipeline_new_run, tool_process, TracerProjectConfig,
-    };
+    use tracer::{log_message, pipeline_finish_run, pipeline_new_run, tool_process, TracerConfig};
 
-    async fn setup() -> Result<TracerProjectConfig> {
+    async fn setup() -> Result<TracerConfig> {
         let settings = Config::builder()
             .add_source(
                 File::with_name("Settings")
@@ -19,7 +17,7 @@ mod tests {
             )
             .build()?;
 
-        let config: TracerProjectConfig = settings.try_deserialize()?;
+        let config: TracerConfig = settings.try_deserialize()?;
         Ok(config)
     }
 

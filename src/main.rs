@@ -7,7 +7,7 @@ use crate::cli::{Cli, Commands};
 
 use tracer::{
     log_message, pipeline_finish_run, pipeline_new_run, setup_tracer, tool_process, Tool,
-    TracerProjectConfig,
+    TracerConfig,
 };
 
 #[tokio::main] // Adding the async entry point
@@ -15,7 +15,7 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Setup { api_key } => setup_tracer(&api_key).await,
+        Commands::Setup { api_key } => setup_tracer(api_key).await,
         Commands::Start => start().await,
         Commands::Log { r#type, message } => log(r#type, message).await,
         Commands::End => end().await,
@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
 
 async fn start() -> Result<()> {
     println!("Starting new pipeline...");
-    let config = TracerProjectConfig::load()?;
+    let config = TracerConfig::load_config()?;
 
     pipeline_new_run(&config, "[CLI] Starting pipeline run").await?;
     println!("Started pipeline run successfully...");
@@ -36,7 +36,7 @@ async fn start() -> Result<()> {
 async fn tool(name: String, version: String) -> Result<()> {
     println!("Processing tool...");
     let tool = Tool { name, version };
-    let config = TracerProjectConfig::load()?;
+    let config = TracerConfig::load_config()?;
 
     tool_process(&config, &tool).await?;
     println!("Tool processed successfully...");
@@ -46,7 +46,7 @@ async fn tool(name: String, version: String) -> Result<()> {
 
 async fn log(log_type: String, message: String) -> Result<()> {
     println!("Logging a {} message: {}", log_type, message);
-    let config = TracerProjectConfig::load()?;
+    let config = TracerConfig::load_config()?;
 
     log_message(&config, &message).await?;
     Ok(())
@@ -54,7 +54,7 @@ async fn log(log_type: String, message: String) -> Result<()> {
 
 async fn end() -> Result<()> {
     println!("Ending tracer session...");
-    let config = TracerProjectConfig::load()?;
+    let config = TracerConfig::load_config()?;
 
     pipeline_finish_run(&config).await?;
     Ok(())

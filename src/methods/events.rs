@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde_json::{json, Value};
 
-use crate::TracerProjectConfig;
+use crate::TracerConfig;
 
 use super::utils::handle_response;
 
@@ -26,7 +26,7 @@ impl EventStatus {
 
 pub async fn send_event(
     // keep send_event private
-    config: &TracerProjectConfig,
+    config: &TracerConfig,
     process_status: &str,
     message: &str,
     attributes: Option<Value>,
@@ -46,8 +46,8 @@ pub async fn send_event(
     }
 
     let response = config
-        .client
-        .post(&config.base_url)
+        .http_client
+        .post(&config.service_url)
         .header("x-api-key", &config.api_key)
         .header("Content-Type", "application/json")
         .json(&data)

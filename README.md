@@ -4,6 +4,10 @@
 - Supports cross-platform compatibility to ensure broad usability across different operating systems commonly used in bioinformatics. 🌍
 - Offers a suite of commands that handle key pipeline activities, ensuring a streamlined workflow for end-users. 💼
 
+## One line installation
+
+curl -sSL https://raw.githubusercontent.com/davincios/tracer-cli/master/install-tracer.sh | bash -s
+
 ## How to use on Linux Ubuntu
 
 - check the latest release and copy the link below with the lastest version

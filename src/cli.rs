@@ -3,11 +3,7 @@ use clap::{Parser, Subcommand};
 
 // Define the CLI structure using `clap`
 #[derive(Parser)]
-#[clap(
-    name = "tracer",
-    about = "A tool for tracing application commands",
-    version = "1.0"
-)]
+#[clap(name = "tracer", about = "A tool for tracing application commands")]
 pub struct Cli {
     #[clap(subcommand)]
     pub command: Commands,

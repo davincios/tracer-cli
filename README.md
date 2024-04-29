@@ -7,14 +7,14 @@
 ## How to use on Linux Ubuntu
 
 - check the latest release and copy the link below with the lastest version
-- wget https://github.com/davincios/tracer-cli/releases/download/v0.0.20/tracer_cli-x86_64-unknown-linux-gnu.tar.gz
-- tar -xzf tracer_cli-x86_64-unknown-linux-gnu.tar.gz
-- ./tracer_cli setup HyBmo-zcUzRBn2crJDVPf
+- wget https://github.com/davincios/tracer-cli/releases/download/v0.0.20/tracer-x86_64-unknown-linux-gnu.tar.gz
+- tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
+- ./tracer setup HyBmo-zcUzRBn2crJDVPf
 
 ## Adding to path
 
 - sudo mkdir -p /etc/tracer/
-- sudo cp tracer_cli /etc/tracer/tracer
+- sudo cp tracer /etc/tracer/tracer
 - echo 'export PATH="$PATH:/etc/tracer"' >> ~/.bashrc
 - echo 'alias tracer="tracer"' >> ~/.bashrc
 - source ~/.bashrc
@@ -34,7 +34,7 @@
 - ADD this download into a cURL script!!!!
 - setup moves the binary automatically to /etc/tracer AND creates a directory there
 - do not automatically print the results (api key save and path updated) for tracer setup <API_KEY>
-- add to path as "tracer" instead of tracer_cli
+- add to path as "tracer" instead of tracer
 - Write tests for to communicate API pipeline steps: initialise pipeline, tool_used, log metric, custom message, alrt and finish pipeline run.
 - Make it work locally
 - Have CI/CD deployment pipeline

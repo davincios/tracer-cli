@@ -17,7 +17,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tracer_cli_setup() -> Result<()> {
+    fn test_tracer_setup() -> Result<()> {
         // Set up the API key for the tests
         let api_key_setup = run_command(&["setup", "dDRE5rxJEjktQxCtzsYyz"]).output()?;
         assert!(
@@ -29,7 +29,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tracer_cli_start() -> Result<()> {
+    fn test_tracer_start() -> Result<()> {
         let output_start = run_command(&["start"]).output()?;
         assert!(
             output_start.status.success(),
@@ -40,7 +40,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tracer_cli_log() -> Result<()> {
+    fn test_tracer_log() -> Result<()> {
         // Test 'log'
         let output_log = run_command(&[
             "log",
@@ -58,7 +58,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tracer_cli_tool() -> Result<()> {
+    fn test_tracer_tool() -> Result<()> {
         // Test 'tool'
         // please fix the following issue:
 
@@ -71,7 +71,7 @@ mod tests {
         Ok(())
     }
     #[test]
-    fn test_tracer_cli_end() -> Result<()> {
+    fn test_tracer_end() -> Result<()> {
         // Test 'end'
         let output_end = run_command(&["end"]).output()?;
         assert!(

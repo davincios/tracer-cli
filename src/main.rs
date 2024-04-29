@@ -5,7 +5,7 @@ use clap::Parser;
 mod cli;
 use crate::cli::{Cli, Commands};
 
-use tracer_cli::{
+use tracer::{
     log_message, pipeline_finish_run, pipeline_new_run, setup_tracer, tool_process, Tool,
     TracerProjectConfig,
 };

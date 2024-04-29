@@ -49,6 +49,6 @@
 #         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
 #         uses: softprops/action-gh-release@v2.0.4
 #         with:
-#           files: ./target/release/tracer_cli
+#           files: ./target/release/tracer
 #         env:
 #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

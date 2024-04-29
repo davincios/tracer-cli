@@ -6,7 +6,7 @@ use std::{env, fs, os::unix::fs::PermissionsExt, path::PathBuf};
 
 mod add_to_path;
 
-use add_to_path::setup_tracer_cli_path;
+use add_to_path::setup_config_tracer;
 
 #[derive(Serialize, Deserialize)]
 pub struct TracerProjectConfig {
@@ -61,7 +61,7 @@ pub async fn setup_tracer(api_key: &str) -> Result<()> {
     config.save()?;
     let path = TracerProjectConfig::get_path()?;
     println!("API key saved to {:?}", path);
-    setup_tracer_cli_path().await?;
+    setup_config_tracer().await?;
     Ok(())
 }
 

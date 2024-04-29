@@ -5,8 +5,8 @@ mod tests {
     use super::*;
     use anyhow::Result;
     use tokio;
-    use tracer_cli::methods::Tool;
-    use tracer_cli::{
+    use tracer::methods::Tool;
+    use tracer::{
         log_message, pipeline_finish_run, pipeline_new_run, tool_process, TracerProjectConfig,
     };
 

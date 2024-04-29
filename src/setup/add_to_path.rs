@@ -1,66 +1,81 @@
 use anyhow::{Context, Result};
-use std::{env, fs, io::Write, os::unix::fs::PermissionsExt, path::Path, process::Command};
+use std::{
+    env, fs,
+    io::Write,
+    os::unix::fs::PermissionsExt,
+    path::{Path, PathBuf},
+    process::Command,
+};
+
+/// Configuration for setting up the tracer.
+struct TracerConfig {
+    tracer_dir: PathBuf,
+    shell_config: PathBuf,
+}
+
+impl TracerConfig {
+    /// Initializes the configuration for the tracer setup.
+    fn new() -> Result<Self> {
+        let home_dir = env::var("HOME").context("Failed to get HOME environment variable")?;
+        let shell = env::var("SHELL").unwrap_or_else(|_| String::from("/bin/bash"));
+        let shell_config_file = if shell.contains("zsh") {
+            ".zshrc"
+        } else {
+            ".bashrc"
+        };
+
+        Ok(Self {
+            tracer_dir: PathBuf::from("/tmp/tracer"),
+            shell_config: Path::new(&home_dir).join(shell_config_file),
+        })
+    }
+}
 
 /// Append a line to a config file if it does not already contain it.
 fn append_to_config(config_path: &Path, entry: &str) -> Result<()> {
+    let content = fs::read_to_string(config_path)
+        .with_context(|| format!("Failed to read shell config file at {:?}", config_path))?;
+
+    if content.contains(entry) {
+        return Ok(());
+    }
+
     let mut file = fs::OpenOptions::new()
-        .create(true)
         .append(true)
         .open(config_path)
         .with_context(|| format!("Failed to open {:?}", config_path))?;
 
-    let content =
-        fs::read_to_string(config_path).with_context(|| "Failed to read shell config file")?;
-
-    if !content.contains(entry) {
-        writeln!(file, "{}", entry).with_context(|| "Failed to write to shell config file")?;
-    }
-
-    Ok(())
+    writeln!(file, "{}", entry).with_context(|| "Failed to write to shell config file")
 }
 
-/// Add `tracer_cli` to the system path and set up necessary configurations.
-pub async fn setup_tracer_cli_path() -> Result<()> {
-    // Ensure /etc/tracer/ directory exists
-    let tracer_dir = Path::new("/etc/tracer");
-    fs::create_dir_all(tracer_dir)
-        .with_context(|| format!("Failed to create directory {:?}", tracer_dir))?;
+/// Sets up tracer in the system.
+pub async fn setup_config_tracer() -> Result<()> {
+    let config = TracerConfig::new()?;
+    fs::create_dir_all(&config.tracer_dir)
+        .with_context(|| format!("Failed to create directory {:?}", config.tracer_dir))?;
 
-    // Copy `tracer_cli` to /etc/tracer/tracer_cli
-    let tracer_cli_path = tracer_dir.join("tracer_cli");
-    fs::copy("tracer_cli", &tracer_cli_path)
-        .with_context(|| format!("Failed to copy `tracer_cli` to {:?}", tracer_cli_path))?;
+    let tracer_path = config.tracer_dir.join("tracer");
+    fs::copy("tracer", &tracer_path)
+        .with_context(|| format!("Failed to copy `tracer` to {:?}", tracer_path))?;
+    fs::set_permissions(&tracer_path, fs::Permissions::from_mode(0o755))?;
 
-    // Set executable permissions for tracer_cli
-    fs::set_permissions(&tracer_cli_path, fs::Permissions::from_mode(0o755))?;
+    let path_entry = format!("export PATH=\"{}:$PATH\"", config.tracer_dir.display());
+    let alias_entry = "alias tracer=\"tracer\"";
 
-    // Determine which shell config file to modify (.bashrc or .zshrc)
-    let home_dir = env::var("HOME").context("Failed to get HOME environment variable")?;
-    let shell_config_path = if env::var("SHELL").map_or(false, |sh| sh.contains("zsh")) {
-        Path::new(&home_dir).join(".zshrc")
-    } else {
-        Path::new(&home_dir).join(".bashrc")
-    };
+    append_to_config(&config.shell_config, &path_entry)?;
+    append_to_config(&config.shell_config, &alias_entry)?;
 
-    // Prepare the entries to add to the shell config file
-    let path_entry = "export PATH=\"$PATH:/etc/tracer\"";
-    let alias_entry = "alias tracer=\"tracer_cli\"";
+    println!("Configurations updated in {:?}", config.shell_config);
 
-    append_to_config(&shell_config_path, path_entry)?;
-    append_to_config(&shell_config_path, alias_entry)?;
-
-    println!("Configurations updated in {:?}", shell_config_path);
-
-    // Execute tracer --version to verify installation
-    if let Ok(output) = Command::new("/etc/tracer/tracer_cli")
+    // Verifying installation
+    Command::new(tracer_path)
         .arg("--version")
         .output()
-    {
-        println!(
-            "Tracer Version: {}",
-            String::from_utf8_lossy(&output.stdout)
-        );
-    }
-
-    Ok(())
+        .map(|output| {
+            println!(
+                "Tracer Version: {}",
+                String::from_utf8_lossy(&output.stdout)
+            );
+            Ok(())
+        })?
 }

@@ -1,5 +1,3 @@
-// please adjust the read function test_api_key_write_and_read of this file and spin it up as a seperate function to test it
-
 use anyhow::{Context, Result};
 use serde_json::{json, to_string_pretty};
 use std::fs;
@@ -103,11 +101,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_api_key_write_and_read() -> Result<()> {
-        // please adjust the read function test_api_key_write_and_read of this file and spin it up as a seperate function to test it
         let test_file_path = PathBuf::from("/tmp/test_tracer_api_key.json");
         let test_api_key = "test_api_key_123";
 
-        // Write the API key to the configuration file
         write_to_configuration_file(test_api_key, &test_file_path)?;
 
         // Read back the contents of the file

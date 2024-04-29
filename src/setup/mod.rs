@@ -40,7 +40,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_setup_tracer_success() {
-        let api_key = "test_api_key".to_string();
+        let api_key = "dDRE5rxJEjktQxCtzsYyz".to_string();
 
         let result = setup_tracer(api_key.clone()).await;
 

@@ -37,6 +37,7 @@ pub async fn send_event(
             "event_type": "process_status",
             "process_type": "pipeline",
             "process_status": process_status,
+            "api_key": config.api_key,
         }]
     });
 
@@ -44,6 +45,8 @@ pub async fn send_event(
     if let Some(props) = attributes {
         data["logs"][0]["attributes"] = props;
     }
+
+    println!("Sending event: {:?}", config.api_key.to_string());
 
     let response = config
         .http_client

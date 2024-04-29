@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde_json::{json, Value};
 
-use crate::TracerConfig;
+use crate::TracerAppConfig;
 
 use super::utils::handle_response;
 
@@ -26,7 +26,7 @@ impl EventStatus {
 
 pub async fn send_event(
     // keep send_event private
-    config: &TracerConfig,
+    config: &TracerAppConfig,
     process_status: &str,
     message: &str,
     attributes: Option<Value>,

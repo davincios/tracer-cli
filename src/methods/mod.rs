@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde_json::json;
 
-use crate::TracerConfig;
+use crate::TracerAppConfig;
 
 use self::events::{send_event, EventStatus};
 
@@ -14,7 +14,7 @@ pub struct Tool {
     pub version: String,
 }
 
-pub async fn pipeline_new_run(config: &TracerConfig, msg: &str) -> Result<()> {
+pub async fn pipeline_new_run(config: &TracerAppConfig, msg: &str) -> Result<()> {
     send_event(
         config,
         EventStatus::NewRun.as_str(),
@@ -24,7 +24,7 @@ pub async fn pipeline_new_run(config: &TracerConfig, msg: &str) -> Result<()> {
     .await
 }
 
-pub async fn tool_process(config: &TracerConfig, tool: &Tool) -> Result<()> {
+pub async fn tool_process(config: &TracerAppConfig, tool: &Tool) -> Result<()> {
     let properties = json!({
         "tool_version": tool.version
     });
@@ -38,7 +38,7 @@ pub async fn tool_process(config: &TracerConfig, tool: &Tool) -> Result<()> {
     .await
 }
 
-pub async fn log_message(config: &TracerConfig, message: &str) -> Result<()> {
+pub async fn log_message(config: &TracerAppConfig, message: &str) -> Result<()> {
     send_event(
         config,
         EventStatus::RunStatusMessage.as_str(),
@@ -48,7 +48,7 @@ pub async fn log_message(config: &TracerConfig, message: &str) -> Result<()> {
     .await
 }
 
-pub async fn pipeline_finish_run(config: &TracerConfig) -> Result<()> {
+pub async fn pipeline_finish_run(config: &TracerAppConfig) -> Result<()> {
     send_event(
         config,
         EventStatus::FinishedRun.as_str(),

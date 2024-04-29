@@ -7,9 +7,12 @@
 ## How to use on Linux Ubuntu
 
 - check the latest release and copy the link below with the lastest version
-- wget https://github.com/davincios/tracer-cli/releases/download/v0.0.20/tracer-x86_64-unknown-linux-gnu.tar.gz
-- tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
-- ./tracer setup HyBmo-zcUzRBn2crJDVPf
+
+```shell
+wget https://github.com/davincios/tracer-cli/releases/download/v0.0.22/tracer-x86_64-unknown-linux-gnu.tar.gz
+tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
+./tracer setup HyBmo-zcUzRBn2crJDVPf
+```
 
 ## Adding to path
 

@@ -25,15 +25,29 @@ pub async fn setup_tracer(api_key: String) -> Result<()> {
     // Load the configuration to verify if the API_KEY is loadable from the file
     let config = TracerAppConfig::load_config()?;
 
-    assert_eq!(
-        api_key, // use the original api_key here since it has not been moved
-        config.api_key,
-        "API key mismatch detected."
-    );
+    assert_eq!(api_key, config.api_key, "API key mismatch detected.");
     println!(
         "Tracer setup completed successfully with API key: {}",
         config.api_key
     );
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_setup_tracer_success() {
+        let api_key = "test_api_key".to_string();
+
+        let result = setup_tracer(api_key.clone()).await;
+
+        if let Err(ref e) = result {
+            println!("Setup failed with error: {}", e);
+        }
+
+        assert!(result.is_ok(), "Setup should succeed");
+    }
 }

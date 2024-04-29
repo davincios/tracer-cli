@@ -1,5 +1,9 @@
+// please adjust the read function test_api_key_write_and_read of this file and spin it up as a seperate function to test it
+
 use anyhow::{Context, Result};
+use serde_json::{json, to_string_pretty};
 use std::fs;
+use std::io;
 use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
@@ -15,20 +19,32 @@ fn create_config_directory(path: &PathBuf) -> Result<()> {
     Ok(())
 }
 
-fn create_configuration_file(config_file_path: &PathBuf) -> Result<()> {
-    if !config_file_path.exists() {
-        fs::File::create(config_file_path)
-            .with_context(|| format!("Failed to create file: {:?}", config_file_path))?;
-        fs::set_permissions(config_file_path, fs::Permissions::from_mode(0o600)).with_context(
-            || format!("Failed to set permissions for file: {:?}", config_file_path),
-        )?;
+fn create_configuration_file(config_json_file_path: &PathBuf) -> Result<()> {
+    if !config_json_file_path.exists() {
+        fs::File::create(config_json_file_path)
+            .with_context(|| format!("Failed to create file: {:?}", config_json_file_path))?;
+        fs::set_permissions(config_json_file_path, fs::Permissions::from_mode(0o600))
+            .with_context(|| {
+                format!(
+                    "Failed to set permissions for file: {:?}",
+                    config_json_file_path
+                )
+            })?;
     }
     Ok(())
 }
 
-fn write_to_configuration_file(api_key: &str, config_file_path: &PathBuf) -> Result<()> {
-    let mut config = fs::File::create(config_file_path)?;
-    writeln!(config, "api_key = {:?}", api_key)?;
+fn write_to_configuration_file(api_key: &str, config_json_file_path: &PathBuf) -> io::Result<()> {
+    // Create a JSON object for the API key
+    let api_key_data = json!({ "api_key": api_key });
+
+    // Serialize the JSON object to a pretty string
+    let api_key_json = to_string_pretty(&api_key_data).expect("Failed to serialize API key");
+
+    // Write the JSON string to the file
+    let mut config = fs::File::create(config_json_file_path)?;
+    writeln!(config, "{}", api_key_json)?;
+
     Ok(())
 }
 
@@ -51,6 +67,7 @@ pub async fn setup_tracer_configuration_files(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::Value;
     use std::io::Read;
 
     #[tokio::test]
@@ -86,6 +103,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_api_key_write_and_read() -> Result<()> {
+        // please adjust the read function test_api_key_write_and_read of this file and spin it up as a seperate function to test it
         let test_file_path = PathBuf::from("/tmp/test_tracer_api_key.json");
         let test_api_key = "test_api_key_123";
 
@@ -97,12 +115,15 @@ mod tests {
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;
 
+        // Parse the JSON to get the API key value
+        let parsed_json: Value = serde_json::from_str(&contents)?;
+        let read_api_key = parsed_json["api_key"].as_str().unwrap();
+
         // Clean up: remove the test file
         fs::remove_file(test_file_path)?;
 
         // Check that the contents match the API key written
-        let expected_contents = format!("api_key = {:?}", test_api_key);
-        assert_eq!(contents.trim(), expected_contents);
+        assert_eq!(read_api_key, test_api_key);
         Ok(())
     }
 }

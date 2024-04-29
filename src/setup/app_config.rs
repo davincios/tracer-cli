@@ -1,21 +1,21 @@
+use crate::setup::paths::ConfigPaths;
 use anyhow::{Context, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::sync::Arc;
-
-use crate::setup::paths::ConfigPaths; // Ensure the paths module is correctly imported
+use std::sync::Arc; // Ensure the paths module is correctly imported
 
 #[derive(Serialize, Deserialize)]
 pub struct TracerAppConfig {
     pub api_key: String,
+    #[serde(default)]
+    // This uses the default value for String if not present, which is an empty string
     pub service_url: String,
     #[serde(skip)]
     pub http_client: Arc<Client>,
 }
 
 impl TracerAppConfig {
-    // Load configuration from a file, optionally specifying a file path
     pub fn load_config() -> Result<Self> {
         let tracer_config_file_path = ConfigPaths::tracer_config_file_path()
             .to_str()
@@ -28,15 +28,20 @@ impl TracerAppConfig {
                 tracer_config_file_path
             )
         })?;
+
+        println!("Raw configuration data: {}", config_data);
+
         let mut config: TracerAppConfig = serde_json::from_str(&config_data)
             .with_context(|| "Failed to deserialize the configuration")?;
 
-        // Additional trimming and setup
         config.api_key = config.api_key.trim().to_string();
         config.http_client = Arc::new(Client::new());
 
-        // Optionally read service URL from an environment variable or fallback to default
-        config.service_url = "https://app.tracer.bio/api/fluent-bit-webhook".to_string();
+        // Load service URL from an environment variable if not provided in the JSON
+        if config.service_url.is_empty() {
+            config.service_url = std::env::var("TRACER_SERVICE_URL")
+                .unwrap_or_else(|_| "https://app.tracer.bio/api/fluent-bit-webhook".to_string());
+        }
 
         Ok(config)
     }

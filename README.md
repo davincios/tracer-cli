@@ -6,16 +6,17 @@
 
 ## How to use on Linux Ubuntu
 
-- wget https://github.com/davincios/tracer-cli/releases/download/v0.0.14/tracer_cli-x86_64-unknown-linux-gnu.tar.gz
+- check the latest release and copy the link below with the lastest version
+- wget https://github.com/davincios/tracer-cli/releases/download/v0.0.20/tracer_cli-x86_64-unknown-linux-gnu.tar.gz
 - tar -xzf tracer_cli-x86_64-unknown-linux-gnu.tar.gz
 - ./tracer_cli setup HyBmo-zcUzRBn2crJDVPf
 
 ## Adding to path
 
 - sudo mkdir -p /etc/tracer/
-- sudo cp tracer_cli /etc/tracer/tracer_cli
+- sudo cp tracer_cli /etc/tracer/tracer
 - echo 'export PATH="$PATH:/etc/tracer"' >> ~/.bashrc
-- echo 'alias tracer="tracer_cli"' >> ~/.bashrc
+- echo 'alias tracer="tracer"' >> ~/.bashrc
 - source ~/.bashrc
 - tracer --version
 
@@ -23,13 +24,14 @@
 
 - tracer --help
 - tracer --version
-- tracer setup <API_KEY_HERE>
+- tracer setup HyBmo-zcUzRBn2crJDVPf
 - tracer start
 - tracer log --type warning QC mapping reads GC content below 53% threshold
 - tracer tool BWA_MEM2 1.1
 
 ## Todos
 
+- ADD this download into a cURL script!!!!
 - setup moves the binary automatically to /etc/tracer AND creates a directory there
 - do not automatically print the results (api key save and path updated) for tracer setup <API_KEY>
 - add to path as "tracer" instead of tracer_cli

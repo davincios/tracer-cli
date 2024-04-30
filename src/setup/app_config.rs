@@ -1,4 +1,4 @@
-use crate::setup::paths::ConfigPaths;
+use crate::config::paths::ConfigPaths;
 use anyhow::{Context, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};

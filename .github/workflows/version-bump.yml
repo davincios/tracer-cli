@@ -61,6 +61,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.actions.createWorkflowDispatch({
-              workflow_id: 'cross-platform-release.yml',
+              workflow_id: 'Release',
               ref: 'master' 
             })

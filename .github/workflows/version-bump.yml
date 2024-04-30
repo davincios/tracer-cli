@@ -3,7 +3,7 @@ name: Automatic Version Bump and Tagging
 on:
   push:
     branches:
-      - master # or main, depending on your default branch name
+      - master # Ensure this matches your default branch name
 
 jobs:
   bump_version_and_tag:
@@ -13,9 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Important for tags and history
+          fetch-depth: 0 # Ensures all history and tags are fetched
 
-      - name: Install rust
+      - name: Install Rust
         run: rustup toolchain install stable --profile minimal
 
       - name: Run Tests
@@ -28,7 +28,7 @@ jobs:
           CURRENT_VERSION=$(grep '^version =' Cargo.toml | sed -E 's/version = "(.*)"/\1/')
           echo "Current Version: $CURRENT_VERSION"
 
-          # Assuming a simple patch version bump for demonstration
+          # Assuming a simple patch version bump
           IFS='.' read -ra VER <<< "$CURRENT_VERSION"
           PATCH=$((VER[2] + 1))
           NEW_VERSION="${VER[0]}.${VER[1]}.$PATCH"
@@ -45,8 +45,22 @@ jobs:
           git add Cargo.toml
           git commit -m "Bump version to ${{ steps.version_bump.outputs.NEW_VERSION }}"
           git tag -a "v${{ steps.version_bump.outputs.NEW_VERSION }}" -m "Release v${{ steps.version_bump.outputs.NEW_VERSION }}"
-          git push origin master
-          git push --tags
+          git push origin HEAD --tags
 
       - name: Output New Version
-        run: "echo New Version: ${{ steps.version_bump.outputs.NEW_VERSION }} tagged and pushed"
+        run: 'echo "New Version: ${{ steps.version_bump.outputs.NEW_VERSION }} tagged and pushed"'
+
+  trigger_release_workflow:
+    runs-on: ubuntu-latest
+    needs: bump_version_and_tag
+
+    steps:
+      - name: Trigger Release Workflow
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.actions.createWorkflowDispatch({
+              workflow_id: 'cross-platform-release.yml', // Replace with your Release workflow ID
+              ref: 'master' // Replace with your default branch name if different
+            })

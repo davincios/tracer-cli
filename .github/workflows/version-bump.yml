@@ -1,8 +1,0 @@
-# name: Automatic Version Bump and Tagging
-
-# on:
-#   push:
-#     branches:
-#       - master # Ensure this matches your default branch name
-
-# jobs:

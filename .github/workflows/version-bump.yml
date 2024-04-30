@@ -1,51 +1,8 @@
-name: Automatic Version Bump and Tagging
+# name: Automatic Version Bump and Tagging
 
-on:
-  push:
-    branches:
-      - master # Ensure this matches your default branch name
+# on:
+#   push:
+#     branches:
+#       - master # Ensure this matches your default branch name
 
-jobs:
-  bump_version_and_tag:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Ensures all history and tags are fetched
-
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal
-
-      - name: Run Tests
-        run: cargo test --verbose
-
-      - name: Determine Version Bump and Update Cargo.toml
-        id: version_bump
-        run: |
-          # Extract the current version from Cargo.toml
-          CURRENT_VERSION=$(grep '^version =' Cargo.toml | sed -E 's/version = "(.*)"/\1/')
-          echo "Current Version: $CURRENT_VERSION"
-
-          # Assuming a simple patch version bump
-          IFS='.' read -ra VER <<< "$CURRENT_VERSION"
-          PATCH=$((VER[2] + 1))
-          NEW_VERSION="${VER[0]}.${VER[1]}.$PATCH"
-          echo "New Version: $NEW_VERSION"
-
-          # Update the version in Cargo.toml
-          sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" Cargo.toml
-          echo "::set-output name=NEW_VERSION::$NEW_VERSION"
-
-      - name: Commit and Tag New Version
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add Cargo.toml
-          git commit -m "Bump version to ${{ steps.version_bump.outputs.NEW_VERSION }}"
-          git tag -a "v${{ steps.version_bump.outputs.NEW_VERSION }}" -m "Release v${{ steps.version_bump.outputs.NEW_VERSION }}"
-          git push origin HEAD --tags
-
-      - name: Output New Version
-        run: 'echo "New Version: ${{ steps.version_bump.outputs.NEW_VERSION }} tagged and pushed"'
+# jobs:

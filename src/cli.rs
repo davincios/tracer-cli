@@ -3,7 +3,11 @@ use clap::{Parser, Subcommand};
 
 // Define the CLI structure using `clap`
 #[derive(Parser)]
-#[clap(name = "tracer", about = "A tool for tracing application commands")]
+#[clap(
+    name = "tracer",
+    about = "A tool for monitoring bioinformatics applications",
+    version = env!("CARGO_PKG_VERSION") // Automatically use the version from Cargo.toml
+)]
 pub struct Cli {
     #[clap(subcommand)]
     pub command: Commands,
@@ -26,4 +30,20 @@ pub enum Commands {
         version: String,
     },
     End,
+}
+
+// Tests
+#[cfg(test)]
+mod tests {
+    use assert_cmd::Command;
+    use predicates::prelude::*; // This is used for writing assertions
+
+    #[test]
+    fn test_version() {
+        let mut cmd = Command::cargo_bin("tracer").unwrap();
+        cmd.arg("--version");
+        cmd.assert()
+            .success()
+            .stdout(predicate::str::contains(env!("CARGO_PKG_VERSION")));
+    }
 }

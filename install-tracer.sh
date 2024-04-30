@@ -48,7 +48,6 @@ echo "Downloading Tracer CLI version ${TRACER_VERSION}..."
 $DOWNLOAD_COMMAND "$TRACER_URL"
 
 # Extract the downloaded tarball
-echo "Extracting Tracer CLI..."
 tar -xzf tracer.tar.gz
 chmod +x tracer
 
@@ -62,7 +61,6 @@ sudo mkdir -p /etc/tracer/
 sudo cp tracer /etc/tracer/tracer
 
 # Execute setup with the API key
-echo "Setting up Tracer CLI with provided API key..."
 ./tracer setup "$API_KEY"
 
 # Function to update tracer configuration in config files
@@ -75,7 +73,6 @@ update_config() {
     # Add new tracer configuration
     echo 'export PATH="$PATH:/etc/tracer"' >>"$config_file"
     echo 'alias tracer="tracer"' >>"$config_file"
-    echo "Updated $config_file with tracer configuration."
 }
 
 # Update .bashrc and .zshrc
@@ -84,11 +81,15 @@ ZSH_CONFIG="$HOME/.zshrc"
 update_config "$BASH_CONFIG"
 update_config "$ZSH_CONFIG"
 
-echo "To complete setup, please source your shell configuration files or open a new terminal session:"
-echo "source $BASH_CONFIG"
-echo "source $ZSH_CONFIG"
-
-# Check tracer version to confirm installation
-tracer help
+echo -e "To complete setup, please source your shell configuration files or open a new terminal session:\nsource $BASH_CONFIG\nsource $ZSH_CONFIG"
 
 echo "Tracer CLI has been installed successfully."
+
+# Cleanup function to remove downloaded and extracted files
+cleanup() {
+    echo "Cleaning up installation files..."
+    rm -f tracer.tar.gz tracer
+}
+
+# Call cleanup function before exiting
+trap cleanup EXIT

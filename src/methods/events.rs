@@ -11,6 +11,7 @@ pub enum EventStatus {
     FinishedRun,
     RunStatusMessage,
     ToolExecution,
+    InstallationFinished,
 }
 
 impl EventStatus {
@@ -20,6 +21,7 @@ impl EventStatus {
             EventStatus::FinishedRun => "finished_run",
             EventStatus::RunStatusMessage => "run_status_message",
             EventStatus::ToolExecution => "tool_execution",
+            EventStatus::InstallationFinished => "installation_finished",
         }
     }
 }

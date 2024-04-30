@@ -3,7 +3,7 @@ use serde_json::json;
 
 use crate::TracerAppConfig;
 
-use self::events::{send_event, EventStatus};
+pub use self::events::{send_event, EventStatus};
 
 // Declare submodules as private
 mod events;

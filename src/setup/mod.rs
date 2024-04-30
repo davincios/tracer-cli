@@ -6,6 +6,7 @@ use anyhow::Result;
 pub use app_config::TracerAppConfig;
 use files::setup_tracer_configuration_files;
 
+use crate::methods::{send_event, EventStatus};
 mod paths;
 pub use paths::ConfigPaths;
 
@@ -30,6 +31,14 @@ pub async fn setup_tracer(api_key: String) -> Result<()> {
         "Tracer setup completed successfully with API key: {}",
         config.api_key
     );
+
+    send_event(
+        &config,
+        EventStatus::InstallationFinished.as_str(),
+        &format!("[TracerCLI setup] Installation completed"),
+        None,
+    )
+    .await?;
 
     Ok(())
 }

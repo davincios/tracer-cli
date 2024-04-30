@@ -48,8 +48,6 @@ pub async fn send_event(
         data["logs"][0]["attributes"] = props;
     }
 
-    println!("Sending event: {:?}", config.api_key.to_string());
-
     let response = config
         .http_client
         .post(&config.service_url)

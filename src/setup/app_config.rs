@@ -29,8 +29,6 @@ impl TracerAppConfig {
             )
         })?;
 
-        println!("Raw configuration data: {}", config_data);
-
         let mut config: TracerAppConfig = serde_json::from_str(&config_data)
             .with_context(|| "Failed to deserialize the configuration")?;
 

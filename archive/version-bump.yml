@@ -3,7 +3,6 @@ name: Automatic Version Bump and Tagging
 on:
   release:
     # This workflow will only run when a release is published to bump the version FOR THE NEXT RELEASE
-    types: [published]
 
 jobs:
   bump_version_and_tag:

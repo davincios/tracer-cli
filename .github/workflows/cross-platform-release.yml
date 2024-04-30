@@ -1,69 +1,60 @@
-name: Automatic Version Bump and Tagging
+name: Cross-platform Release
 
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v*"
 
 jobs:
-  bump_version_and_tag:
+   create-release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
         with:
-          fetch-depth: 0 # Ensures all history and tags are fetched
+          # (optional) Path to changelog.
+          # changelog: CHANGELOG.md
+          # (required) GitHub token for creating GitHub Releases.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal
+  upload-assets:
+    needs: create-release
+    strategy:
+      matrix:
+        include:
+          # - target: aarch64-unknown-linux-gnu
+          #   os: ubuntu-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          # Universal macOS binary is supported as universal-apple-darwin.
+          - target: universal-apple-darwin
+            os: macos-latest
 
-      - name: Run Tests
-        run: cargo test --verbose
-
-      - name: Determine Version Bump and Update Cargo.toml
-        id: version_bump
-        run: |
-          # Extract the current version from Cargo.toml
-          CURRENT_VERSION=$(grep '^version =' Cargo.toml | sed -E 's/version = "(.*)"/\1/')
-          echo "Current Version: $CURRENT_VERSION"
-
-          # Assuming a simple patch version bump
-          IFS='.' read -ra VER <<< "$CURRENT_VERSION"
-          PATCH=$((VER[2] + 1))
-          NEW_VERSION="${VER[0]}.${VER[1]}.$PATCH"
-          echo "New Version: $NEW_VERSION"
-
-          # Update the version in Cargo.toml
-          sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" Cargo.toml
-          echo "::set-output name=NEW_VERSION::$NEW_VERSION"
-
-      - name: Commit and Tag New Version
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add Cargo.toml
-          git commit -m "Bump version to ${{ steps.version_bump.outputs.NEW_VERSION }}"
-          git tag -a "v${{ steps.version_bump.outputs.NEW_VERSION }}" -m "Release v${{ steps.version_bump.outputs.NEW_VERSION }}"
-          git push origin HEAD --tags
-
-      - name: Output New Version
-        run: 'echo "New Version: ${{ steps.version_bump.outputs.NEW_VERSION }} tagged and pushed"'
-
-  trigger_release_workflow:
-    runs-on: ubuntu-latest
-    needs: bump_version_and_tag
-
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Trigger Release Workflow
-        uses: actions/github-script@v4
+      - uses: actions/checkout@v4
+      - uses: taiki-e/upload-rust-binary-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow: 'Release',  
-              ref: 'master',                
-              inputs: {}                   
-            });
+          # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
+          # Note that glob pattern is not supported yet.
+          bin: tracer
+          # (optional) Target triple, default is host triple.
+          # This is optional but it is recommended that this always be set to
+          # clarify which target you are building for if macOS is included in
+          # the matrix because GitHub Actions changed the default architecture
+          # of macos-latest since macos-14.
+          target: ${{ matrix.target }}
+          # (optional) On which platform to distribute the `.tar.gz` file.
+          # [default value: unix]
+          # [possible values: all, unix, windows, none]
+          tar: unix
+          # (optional) On which platform to distribute the `.zip` file.
+          # [default value: windows]
+          # [possible values: all, unix, windows, none]
+          zip: windows
+          # (required) GitHub token for uploading assets to GitHub Releases.
+          token: ${{ secrets.GITHUB_TOKEN }}

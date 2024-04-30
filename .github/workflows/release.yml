@@ -30,6 +30,11 @@ jobs:
         run: cargo fmt -- --check
       - name: Lint with Clippy
         run: cargo clippy -- -D warnings
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: binary-${{ matrix.os }}
+          path: target/release/tracer
 
   create-release:
     runs-on: ubuntu-latest
@@ -41,11 +46,24 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-assets:
-    needs: create-release
+    needs: [create-release, build-test-and-release]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Upload Rust binaries
+      - name: Download build artifact for Ubuntu
+        uses: actions/download-artifact@v3
+        with:
+          name: binary-ubuntu-latest
+      - name: Download build artifact for macOS
+        uses: actions/download-artifact@v3
+        with:
+          name: binary-macos-latest
+      - name: Upload Rust binaries for Ubuntu
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: tracer
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Rust binaries for macOS
         uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: tracer

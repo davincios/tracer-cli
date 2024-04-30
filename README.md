@@ -4,34 +4,11 @@
 - Supports cross-platform compatibility to ensure broad usability across different operating systems commonly used in bioinformatics. 🌍
 - Offers a suite of commands that handle key pipeline activities, ensuring a streamlined workflow for end-users. 💼
 
-## One line installation
-
-curl -sSL https://raw.githubusercontent.com/davincios/tracer-cli/master/install-tracer.sh | bash -s
-
-## How to use on Linux Ubuntu
-
-- check the latest release and copy the link below with the lastest version
-
-```shell
-wget https://github.com/davincios/tracer-cli/releases/download/v0.0.22/tracer-x86_64-unknown-linux-gnu.tar.gz
-tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
-./tracer setup HyBmo-zcUzRBn2crJDVPf
-```
-
-## Adding to path
-
-- sudo mkdir -p /etc/tracer/
-- sudo cp tracer /etc/tracer/tracer
-- echo 'export PATH="$PATH:/etc/tracer"' >> ~/.bashrc
-- echo 'alias tracer="tracer"' >> ~/.bashrc
-- source ~/.bashrc
-- tracer --version
-
 ## Example usage
 
 - tracer --help
-- tracer --version
-- tracer setup HyBmo-zcUzRBn2crJDVPf
+- tracer version
+- tracer setup <API_KEY>
 - tracer start
 - tracer log --type warning QC mapping reads GC content below 53% threshold
 - tracer tool BWA_MEM2 1.1
@@ -52,3 +29,26 @@ tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
 - cargo release patch # for a patch release
 - cargo release minor # for a minor release
 - cargo release major # for a major release
+
+## Adding to path
+
+- sudo mkdir -p /etc/tracer/
+- sudo cp tracer /etc/tracer/tracer
+- echo 'export PATH="$PATH:/etc/tracer"' >> ~/.bashrc
+- echo 'alias tracer="tracer"' >> ~/.bashrc
+- source ~/.bashrc
+- tracer --version
+
+## One line installation
+
+curl -sSL https://raw.githubusercontent.com/davincios/tracer-cli/master/install-tracer.sh | bash -s
+
+## How to use on Linux Ubuntu
+
+- check the latest release and copy the link below with the lastest version
+
+```shell
+wget https://github.com/davincios/tracer-cli/releases/download/v0.0.22/tracer-x86_64-unknown-linux-gnu.tar.gz
+tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
+./tracer setup <API_KEY>
+```

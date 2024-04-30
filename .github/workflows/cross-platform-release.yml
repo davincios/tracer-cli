@@ -5,9 +5,15 @@ permissions:
 
 # This pipeline is triggered by tag events starting with "v"
 on:
+  workflow_run:
+    workflows: [Automatic Version Bump and Tagging]
+    types: [completed]
+    branches:
+      - master
   push:
     tags:
-      - "v*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
 jobs:
   create-release:
     runs-on: ubuntu-latest

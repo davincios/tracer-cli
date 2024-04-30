@@ -42,13 +42,8 @@ mod tests {
     #[test]
     fn test_tracer_log() -> Result<()> {
         // Test 'log'
-        let output_log = run_command(&[
-            "log",
-            "--type",
-            "warning",
-            "QC mapping reads GC content below 61% threshold",
-        ])
-        .output()?;
+        let output_log =
+            run_command(&["log", "QC mapping reads GC content below 61% threshold"]).output()?;
         assert!(
             output_log.status.success(),
             "Logging failed: {}",

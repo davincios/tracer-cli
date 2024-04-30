@@ -16,19 +16,10 @@ pub struct Cli {
 // Define the subcommands
 #[derive(Subcommand)]
 pub enum Commands {
-    Setup {
-        api_key: String,
-    },
+    Setup { api_key: String },
     Start,
-    Log {
-        #[clap(long)]
-        r#type: String,
-        message: String,
-    },
-    Tool {
-        name: String,
-        version: String,
-    },
+    Log { message: String },
+    Tool { name: String, version: String },
     End,
 }
 

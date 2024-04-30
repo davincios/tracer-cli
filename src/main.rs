@@ -17,7 +17,7 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Setup { api_key } => setup(api_key).await,
         Commands::Start => start().await,
-        Commands::Log { r#type, message } => log(r#type, message).await,
+        Commands::Log { message } => log(message).await,
         Commands::End => end().await,
         Commands::Tool { name, version } => tool(name, version).await,
     }
@@ -59,8 +59,8 @@ async fn tool(name: String, version: String) -> Result<()> {
     Ok(())
 }
 
-async fn log(log_type: String, message: String) -> Result<()> {
-    println!("Logging a {} message: {}", log_type, message);
+async fn log(message: String) -> Result<()> {
+    println!("Logging a message: {}", message);
     let config = TracerAppConfig::load_config()?;
 
     log_message(&config, &message).await?;

@@ -16,3 +16,10 @@ Cargo.lock
 *.pdb
 
 Settings.toml
+
+tracer
+
+tracer.tar.gz
+
+responses/*
+responses

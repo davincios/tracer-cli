@@ -18,22 +18,23 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4.1.4
-      - run: rustup toolchain install stable --profile minimal
-        name: Setup Rust toolchain
-      - uses: Swatinem/rust-cache@v2.7.3
-      - run: cargo build --release --verbose
-        name: Build
-      - run: cargo test --verbose
-        name: Run tests
-      - run: cargo fmt -- --check
-        name: Check Formatting
-      - run: cargo clippy -- -D warnings
-        name: Lint with Clippy
-      - uses: actions/upload-artifact@v3
+      - name: Setup Rust toolchain
+        run: rustup toolchain install stable --profile minimal
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2.7.3
+      - name: Build
+        run: cargo build --release --verbose
+      - name: Run tests
+        run: cargo test --verbose
+      - name: Check Formatting
+        run: cargo fmt -- --check
+      - name: Lint with Clippy
+        run: cargo clippy -- -D warnings
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
           name: binary-${{ matrix.os }}
           path: target/release/tracer
-        name: Upload build artifact
 
   create-release:
     runs-on: ubuntu-latest

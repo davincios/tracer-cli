@@ -28,6 +28,10 @@ tokio-tungstenite = "0.13.0"
 dirs = "3.0"
 tempfile = "3.10.1"
 
+[package.metadata.release]
+sign-tag = true
+disable-publish = false
+
 
 [dev-dependencies]
 assert_cmd = "2.0.14"

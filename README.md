@@ -46,3 +46,9 @@ tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
 - Make it work locally
 - Have CI/CD deployment pipeline
 - Write a whole pipeline test
+
+## release mangement
+
+- cargo release patch # for a patch release
+- cargo release minor # for a minor release
+- cargo release major # for a major release

@@ -27,11 +27,19 @@ jobs:
       - name: Determine Version Bump and Update Cargo.toml
         id: version_bump
         run: |
-          # Example: Determine new version and bump logic (needs custom script or action)
-          echo "New version logic goes here"
-          NEW_VERSION="0.1.0"  # This should be dynamically calculated
-          echo "::set-output name=NEW_VERSION::$NEW_VERSION"
+          # Extract the current version from Cargo.toml
+          CURRENT_VERSION=$(grep '^version =' Cargo.toml | sed -E 's/version = "(.*)"/\1/')
+          echo "Current Version: $CURRENT_VERSION"
+
+          # Assuming a simple patch version bump for demonstration
+          IFS='.' read -ra VER <<< "$CURRENT_VERSION"
+          PATCH=$((VER[2] + 1))
+          NEW_VERSION="${VER[0]}.${VER[1]}.$PATCH"
+          echo "New Version: $NEW_VERSION"
+
+          # Update the version in Cargo.toml
           sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" Cargo.toml
+          echo "::set-output name=NEW_VERSION::$NEW_VERSION"
 
       - name: Commit and Tag New Version
         run: |
@@ -40,7 +48,8 @@ jobs:
           git add Cargo.toml
           git commit -m "Bump version to ${{ steps.version_bump.outputs.NEW_VERSION }}"
           git tag -a "v${{ steps.version_bump.outputs.NEW_VERSION }}" -m "Release v${{ steps.version_bump.outputs.NEW_VERSION }}"
-          git push origin master --tags
+          git push origin master
+          git push --tags
 
       - name: Output New Version
         run: "echo New Version: ${{ steps.version_bump.outputs.NEW_VERSION }} tagged and pushed"

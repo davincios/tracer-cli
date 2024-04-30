@@ -5,13 +5,8 @@ permissions:
 
 on:
   push:
-    branches:
-      - master
-      - develop
-  # push:
-  #   tags:
-  #     - v[0-9]+.*
-
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
 jobs:
   create-release:
     runs-on: ubuntu-latest

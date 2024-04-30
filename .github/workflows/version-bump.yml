@@ -49,21 +49,3 @@ jobs:
 
       - name: Output New Version
         run: 'echo "New Version: ${{ steps.version_bump.outputs.NEW_VERSION }} tagged and pushed"'
-
-  trigger_release_workflow:
-    runs-on: ubuntu-latest
-    needs: bump_version_and_tag
-
-    steps:
-      - name: Trigger Release Workflow
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow: 'Release',  
-              ref: 'master',                
-              inputs: {}                   
-            });

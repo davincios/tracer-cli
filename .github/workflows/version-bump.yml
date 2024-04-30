@@ -61,6 +61,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.actions.createWorkflowDispatch({
-              workflow_id: 'Release',
-              ref: 'master' 
-            })
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow: 'Release',  
+              ref: 'master',                
+              inputs: {}                   
+            });

@@ -56,7 +56,7 @@ pub async fn setup_tracer_configuration_files(
     write_to_configuration_file(&api_key, &tracer_config_file_path)?;
     println!(
         "Configuration saved to: {}",
-        tracer_config_file_path.to_str().unwrap().to_string()
+        tracer_config_file_path.to_str().unwrap()
     );
 
     Ok(tracer_config_file_path)

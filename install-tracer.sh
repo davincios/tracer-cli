@@ -222,7 +222,7 @@ update_bashrc_for_fluent_bit() {
 
 # Starts Fluent Bit in the background and echoes its PID.
 start_fluent_bit() {
-    fluent-bit -c /etc/fluent-bit/fluent-bit.conf &
+    fluent-bit -d -c /etc/fluent-bit/fluent-bit.conf &
     FLUENT_BIT_PID=$!
     echo "Fluent Bit started with PID: $FLUENT_BIT_PID."
 }
@@ -253,7 +253,7 @@ main() {
     # start fluent-bit
     start_fluent_bit
     send_event "finished_installation" "Successfully installed Fluent Bit"
-    stop_fluent_bit_after_duration 3600 # default 1 hour
+    stop_fluent_bit_after_duration 604800 # 1 week
     send_event "finished_installation" "Fluent Bit has been stopped"
 }
 

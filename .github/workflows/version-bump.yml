@@ -1,9 +1,9 @@
 name: Automatic Version Bump and Tagging
 
 on:
-  push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+  release:
+    # This workflow will only run when a release is published to bump the version FOR THE NEXT RELEASE
+    types: [published]
 
 jobs:
   bump_version_and_tag:

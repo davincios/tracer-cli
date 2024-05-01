@@ -35,7 +35,7 @@ pub async fn setup_tracer(api_key: String) -> Result<()> {
     send_event(
         &config,
         EventStatus::InstallationFinished.as_str(),
-        &format!("[TracerCLI setup] Installation completed"),
+        &"[TracerCLI setup] Installation completed".to_string(),
         None,
     )
     .await?;

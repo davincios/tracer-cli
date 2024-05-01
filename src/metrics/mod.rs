@@ -19,8 +19,19 @@ impl Metrics {
     }
 }
 
+impl Default for Metrics {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct MetricsCollector {
     metrics: Metrics,
+}
+impl Default for MetricsCollector {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl MetricsCollector {

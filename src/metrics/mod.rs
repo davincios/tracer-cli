@@ -3,7 +3,7 @@
 use serde_json::json;
 use sysinfo::{Disks, System};
 
-use crate::{log_message, methods::EventStatus, send_event};
+use crate::{methods::EventStatus, send_event};
 
 pub struct Metrics {
     disk_usage: Vec<String>,
@@ -66,8 +66,6 @@ impl MetricsCollector {
             let config = crate::TracerAppConfig::load_config().unwrap();
 
             // Send the metric as an event
-            log_message(&config, &metric).await.unwrap();
-            // please fix the send event usage
             let attributes = json!({
                 "name": name,
                 "total_space": total_space,

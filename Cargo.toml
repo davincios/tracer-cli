@@ -4,13 +4,10 @@ version = "0.0.50"
 authors = ["Vincent Hus <developers@tracer.bio>"]
 edition = "2018"
 
-
-# Define the library
 [lib]
 name = "tracer"
 path = "src/lib.rs"
 
-# Define the binary
 [[bin]]
 name = "tracer"
 path = "src/main.rs"
@@ -27,6 +24,8 @@ tokio-util = "0.6.8"
 tokio-tungstenite = "0.13.0"
 dirs = "3.0"
 tempfile = "3.10.1"
+sysinfo = "0.30.11"
+bstr = "1.9.1"
 
 [package.metadata.release]
 sign-tag = true

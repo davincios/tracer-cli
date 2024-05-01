@@ -6,8 +6,8 @@ mod cli;
 use crate::cli::{Cli, Commands};
 
 use tracer::{
-    log_message, pipeline_finish_run, pipeline_new_run, setup_tracer, tool_process, Tool,
-    TracerAppConfig,
+    log_message, metrics::MetricsCollector, pipeline_finish_run, pipeline_new_run, setup_tracer,
+    tool_process, Tool, TracerAppConfig,
 };
 
 #[tokio::main] // Adding the async entry point
@@ -18,8 +18,13 @@ async fn main() -> Result<()> {
         Commands::Setup { api_key } => setup(api_key).await,
         Commands::Start => start().await,
         Commands::Log { message } => log(message).await,
+        Commands::Metrics => metrics().await,
         Commands::End => end().await,
         Commands::Tool { name, version } => tool(name, version).await,
+        Commands::Version => {
+            println!("Tracer version: {}", env!("CARGO_PKG_VERSION"));
+            Ok(())
+        }
     }
 }
 
@@ -64,6 +69,14 @@ async fn log(message: String) -> Result<()> {
     let config = TracerAppConfig::load_config()?;
 
     log_message(&config, &message).await?;
+    Ok(())
+}
+
+async fn metrics() -> Result<()> {
+    println!("Collecting metrics...");
+    let mut metrics_collector = MetricsCollector::new();
+    metrics_collector.collect_disk_usage_metrics().await;
+
     Ok(())
 }
 

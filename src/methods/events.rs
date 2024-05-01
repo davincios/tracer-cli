@@ -12,6 +12,7 @@ pub enum EventStatus {
     RunStatusMessage,
     ToolExecution,
     InstallationFinished,
+    MetricEvent,
 }
 
 impl EventStatus {
@@ -22,6 +23,7 @@ impl EventStatus {
             EventStatus::RunStatusMessage => "run_status_message",
             EventStatus::ToolExecution => "tool_execution",
             EventStatus::InstallationFinished => "installation_finished",
+            EventStatus::MetricEvent => "metric_event",
         }
     }
 }
@@ -40,6 +42,7 @@ pub async fn send_event(
             "process_type": "pipeline",
             "process_status": process_status,
             "api_key": config.api_key,
+            "attributes": attributes // Add attributes if provided
         }]
     });
 

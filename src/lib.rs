@@ -9,3 +9,5 @@ pub mod setup;
 
 pub use setup::{setup_tracer, ConfigPaths, TracerAppConfig};
 pub mod cli;
+
+pub mod metrics;

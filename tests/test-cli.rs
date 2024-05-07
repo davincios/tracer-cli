@@ -40,6 +40,17 @@ mod tests {
     }
 
     #[test]
+    fn test_tracer_metrics() -> Result<()> {
+        let output_start = run_command(&["metrics"]).output()?;
+        assert!(
+            output_start.status.success(),
+            "Start failed: {}",
+            str::from_utf8(&output_start.stderr)?
+        );
+        Ok(())
+    }
+
+    #[test]
     fn test_tracer_log() -> Result<()> {
         // Test 'log'
         let output_log =

@@ -6,8 +6,8 @@ mod cli;
 use crate::cli::{Cli, Commands};
 
 use tracer::{
-    log_message, metrics::MetricsCollector, pipeline_finish_run, pipeline_new_run, setup_tracer,
-    tool_process, Tool, TracerAppConfig,
+    log_message, metrics::DiskMetricsCollector, pipeline_finish_run, pipeline_new_run,
+    setup_tracer, tool_process, Tool, TracerAppConfig,
 };
 
 #[tokio::main] // Adding the async entry point
@@ -73,8 +73,9 @@ async fn log(message: String) -> Result<()> {
 }
 
 async fn metrics() -> Result<()> {
-    println!("Collecting metrics...");
-    let mut metrics_collector = MetricsCollector::new();
+    // how can I let this command run in the background and not block the main thread?
+    // and then execute it for 3 minutes every 20 seconds?
+    let mut metrics_collector = DiskMetricsCollector::new();
     metrics_collector.collect_disk_usage_metrics().await;
 
     Ok(())

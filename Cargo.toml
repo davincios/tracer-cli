@@ -27,7 +27,11 @@ tempfile = "3.10.1"
 sysinfo = "0.30.11"
 bstr = "1.9.1"
 log = "0.4.14"
-openssl = { version = "0.10", features = ["vendored"] }
+
+[features]
+default = []
+vendored-openssl = ["git2/vendored-openssl"]
+
 
 [package.metadata.release]
 sign-tag = true

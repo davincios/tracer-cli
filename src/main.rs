@@ -95,7 +95,8 @@ async fn metrics() -> Result<()> {
             collector.collect_disk_usage_metrics().await; // Ensure these are async and await them.
             collector.metrics.send_metrics().await; // Ensure send_metrics is properly awaited.
         }
-    });
+    })
+    .await?;
 
     println!("Metrics collection started in the background.");
     Ok(())

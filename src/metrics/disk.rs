@@ -34,7 +34,6 @@ impl DiskMetricsCollector {
 
             // Skip collecting if this disk name is already seen in this function execution
             if seen_disks.contains(&name) {
-                println!("Skipping duplicate disk metric for: {}", name);
                 continue;
             }
 

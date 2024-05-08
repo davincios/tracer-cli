@@ -39,6 +39,8 @@ impl Metrics {
         }
 
         MetricsApiHandler::send_metrics(self).await;
+        println!("Metrics sent!");
+
         // Clear the entries after sending them to ensure they are not sent again.
         self.entries.clear();
         self.disk_usage.clear(); // Clearing disk_usage if it's no longer needed. Remove if it has another purpose.

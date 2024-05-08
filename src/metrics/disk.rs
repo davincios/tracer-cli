@@ -7,6 +7,12 @@ pub struct DiskMetricsCollector {
     pub metrics: Metrics,
 }
 
+impl Default for DiskMetricsCollector {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl DiskMetricsCollector {
     pub fn new() -> Self {
         DiskMetricsCollector {

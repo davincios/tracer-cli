@@ -20,6 +20,7 @@ pub enum Commands {
     Start,
     Log { message: String },
     Metrics,
+    Info,
     Tool { name: String, version: String },
     End,
     Version,

@@ -1,104 +1,54 @@
-// how can I import the metrics module function collect_disk metrics in src/lib.rs and src/main.rs?
 // src/metrics/mod.rs
-use serde_json::json;
-use sysinfo::{Disks, System};
+mod api;
+mod disk;
 
-use crate::{methods::EventStatus, send_event};
+pub use self::api::MetricsApiHandler;
+pub use self::disk::DiskMetricsCollector;
+
+pub struct MetricEntry {
+    pub message: String,
+    pub name: String,
+    pub total_space: u64,
+    pub used_space: u64,
+    pub available_space: u64,
+    pub usage_percentage: f64,
+}
 
 pub struct Metrics {
-    disk_usage: Vec<String>,
+    pub entries: Vec<MetricEntry>,
+    pub disk_usage: Vec<String>, // If this is used elsewhere and needs clearing, consider this in implementation.
 }
 
 impl Metrics {
     pub fn new() -> Self {
-        Metrics { disk_usage: vec![] }
+        Metrics {
+            entries: vec![],
+            disk_usage: vec![],
+        }
     }
 
-    pub fn add_metric(&mut self, metric: String) {
-        self.disk_usage.push(metric);
+    pub fn add_metric(&mut self, entry: MetricEntry) {
+        self.entries.push(entry);
+    }
+
+    /// Sends all collected metrics and clears the entries afterwards.
+    pub async fn send_metrics(&mut self) {
+        if self.entries.is_empty() {
+            log::warn!("Attempted to send metrics, but no metrics are available.");
+            return;
+        }
+
+        MetricsApiHandler::send_metrics(self).await;
+        println!("Metrics sent!");
+
+        // Clear the entries after sending them to ensure they are not sent again.
+        self.entries.clear();
+        self.disk_usage.clear(); // Clearing disk_usage if it's no longer needed. Remove if it has another purpose.
     }
 }
 
 impl Default for Metrics {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-pub struct MetricsCollector {
-    metrics: Metrics,
-}
-impl Default for MetricsCollector {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl MetricsCollector {
-    pub fn new() -> Self {
-        MetricsCollector {
-            metrics: Metrics::new(),
-        }
-    }
-
-    pub async fn collect_disk_usage_metrics(&mut self) {
-        let mut sys = System::new_all(); // Create a new system object
-        sys.refresh_all(); // Refresh all information
-
-        let disks = Disks::new_with_refreshed_list();
-        for disk in &disks {
-            println!("{disk:?}");
-            let name = disk.name().to_string_lossy().into_owned();
-            let total_space = disk.total_space();
-            let available_space = disk.available_space();
-            let used_space = total_space - available_space;
-            let usage_percentage = (used_space as f64 / total_space as f64) * 100.0;
-
-            let metric = format!(
-                "Disk: {}, Total Space: {} bytes, Used Space: {} bytes, Available Space: {} bytes, Usage: {:.2}%",
-                name,
-                total_space,
-                used_space,
-                available_space,
-                usage_percentage
-            );
-
-            let config = crate::TracerAppConfig::load_config().unwrap();
-
-            // Send the metric as an event
-            let attributes = json!({
-                "name": name,
-                "total_space": total_space,
-                "used_space": used_space,
-                "available_space": available_space,
-                "usage_percentage": usage_percentage
-            });
-
-            send_event(
-                &config,
-                EventStatus::MetricEvent.as_str(),
-                &metric,
-                Some(attributes),
-            )
-            .await
-            .unwrap();
-
-            self.metrics.add_metric(metric);
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_collect_disk_usage_metrics() {
-        let mut collector = MetricsCollector::new();
-        collector.collect_disk_usage_metrics().await;
-        assert!(
-            !collector.metrics.disk_usage.is_empty(),
-            "Metrics should not be empty after collecting disk usage."
-        );
     }
 }

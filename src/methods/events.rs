@@ -34,6 +34,7 @@ pub async fn send_event(
     process_status: &str,
     message: &str,
     attributes: Option<Value>,
+    should_log: bool,
 ) -> Result<()> {
     let mut data = json!({
         "logs": [{
@@ -60,5 +61,5 @@ pub async fn send_event(
         .send()
         .await?;
 
-    handle_response(response, process_status).await
+    handle_response(response, process_status, should_log).await
 }

@@ -1,6 +1,6 @@
 [package]
 name = "tracer"
-version = "0.0.68"
+version = "0.0.69"
 authors = ["Vincent Hus <developers@tracer.bio>"]
 edition = "2018"
 

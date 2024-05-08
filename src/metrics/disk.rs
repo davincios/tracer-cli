@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::metrics::Metrics;
 use sysinfo::{Disks, System};
 

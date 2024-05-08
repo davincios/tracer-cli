@@ -3,6 +3,7 @@ use serde_json::{json, to_string_pretty};
 use std::fs;
 use std::io;
 use std::io::Write;
+#[cfg(any(target_os = "macos", target_os = "linux"))]
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
 
@@ -11,6 +12,8 @@ fn create_config_directory(path: &PathBuf) -> Result<()> {
     if !path.exists() {
         fs::create_dir_all(path)
             .with_context(|| format!("Failed to create directory: {:?}", path))?;
+        // Set permissions only on macOS and Linux
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
         fs::set_permissions(path, fs::Permissions::from_mode(0o700))
             .with_context(|| format!("Failed to set permissions for directory: {:?}", path))?;
     }
@@ -21,6 +24,8 @@ fn create_configuration_file(config_json_file_path: &PathBuf) -> Result<()> {
     if !config_json_file_path.exists() {
         fs::File::create(config_json_file_path)
             .with_context(|| format!("Failed to create file: {:?}", config_json_file_path))?;
+        // Set permissions only on macOS and Linux
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
         fs::set_permissions(config_json_file_path, fs::Permissions::from_mode(0o600))
             .with_context(|| {
                 format!(
@@ -82,6 +87,7 @@ mod tests {
         let test_file_path = PathBuf::from("/tmp/test_tracer_config.json");
         create_configuration_file(&test_file_path)?;
         assert!(test_file_path.exists());
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
         assert_eq!(
             fs::metadata(&test_file_path)?.permissions().mode() & 0o777,
             0o600

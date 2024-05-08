@@ -39,7 +39,6 @@ impl Metrics {
         }
 
         MetricsApiHandler::send_metrics(self).await;
-        println!("Metrics sent!");
 
         // Clear the entries after sending them to ensure they are not sent again.
         self.entries.clear();

@@ -1,7 +1,6 @@
 // src/main.rs
 use anyhow::Result;
 use clap::Parser;
-use tokio::time::{interval, Duration, Instant};
 
 mod cli;
 use crate::cli::{Cli, Commands};
@@ -40,18 +39,23 @@ async fn main() -> Result<()> {
     }
 }
 
+async fn metrics() -> Result<()> {
+    let mut collector = DiskMetricsCollector::new();
+
+    tokio::spawn(async move {
+        collector.collect_disk_usage_metrics().await; // Ensure these are async and await them.
+        collector.metrics.send_metrics().await; // Ensure send_metrics is properly awaited.
+    });
+    Ok(())
+}
+
 async fn setup(api_key: String) -> Result<()> {
-    println!("Setting up tracer with API key");
     setup_tracer(api_key.clone()).await?;
 
     let config = TracerAppConfig::load_config()?;
 
     assert_eq!(api_key.clone(), config.api_key);
-    println!(
-        "Tracer setup completed successfully with API key: {}",
-        config.api_key
-    );
-
+    metrics().await?;
     Ok(())
 }
 
@@ -59,6 +63,7 @@ async fn start() -> Result<()> {
     println!("Starting new pipeline...");
     let config = TracerAppConfig::load_config()?;
 
+    metrics().await?;
     pipeline_new_run(&config, "[CLI] Starting pipeline run").await?;
     println!("Started pipeline run successfully...");
 
@@ -70,6 +75,7 @@ async fn tool(name: String, version: String) -> Result<()> {
     let tool = Tool { name, version };
     let config = TracerAppConfig::load_config()?;
 
+    metrics().await?;
     tool_process(&config, &tool).await?;
     println!("Tool processed successfully...");
 
@@ -80,25 +86,9 @@ async fn log(message: String) -> Result<()> {
     println!("Logging a message: {}", message);
     let config = TracerAppConfig::load_config()?;
 
+    metrics().await?;
     log_message(&config, &message).await?;
-    Ok(())
-}
 
-async fn metrics() -> Result<()> {
-    let mut collector = DiskMetricsCollector::new();
-
-    tokio::spawn(async move {
-        let mut interval = interval(Duration::from_secs(2));
-        let start = Instant::now();
-        while start.elapsed() < Duration::from_secs(10) {
-            interval.tick().await;
-            collector.collect_disk_usage_metrics().await; // Ensure these are async and await them.
-            collector.metrics.send_metrics().await; // Ensure send_metrics is properly awaited.
-        }
-    })
-    .await?;
-
-    println!("Metrics collection started in the background.");
     Ok(())
 }
 
@@ -106,6 +96,7 @@ async fn end() -> Result<()> {
     println!("Ending tracer session...");
     let config = TracerAppConfig::load_config()?;
 
+    metrics().await?;
     pipeline_finish_run(&config).await?;
     Ok(())
 }

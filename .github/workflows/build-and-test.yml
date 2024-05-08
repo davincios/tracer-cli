@@ -1,0 +1,41 @@
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+env:
+  CARGO_TERM_COLOR: always # Ensures colored output in GitHub Actions logs
+
+jobs:
+  build-and-test:
+    name: Build and Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4.1.4
+
+      - name: Setup Rust toolchain
+        run: rustup toolchain install stable --profile minimal
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2.7.3
+
+      - name: Build
+        run: cargo build --release --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Check Formatting
+        run: cargo fmt -- --check
+
+      - name: Lint with Clippy
+        run: cargo clippy -- -D warnings

@@ -1,6 +1,7 @@
 // src/main.rs
 use anyhow::Result;
 use clap::Parser;
+use tokio::time::{interval, Duration, Instant};
 
 mod cli;
 use crate::cli::{Cli, Commands};
@@ -10,7 +11,7 @@ use tracer::{
     setup_tracer, tool_process, Tool, TracerAppConfig,
 };
 
-#[tokio::main] // Adding the async entry point
+#[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
 
@@ -20,6 +21,17 @@ async fn main() -> Result<()> {
         Commands::Log { message } => log(message).await,
         Commands::Metrics => metrics().await,
         Commands::End => end().await,
+        Commands::Info => {
+            let config = TracerAppConfig::load_config()?;
+            let api_key = config.api_key;
+
+            println!(
+                "Tracer CLI version {} is setup with {}",
+                env!("CARGO_PKG_VERSION"),
+                api_key
+            );
+            Ok(())
+        }
         Commands::Tool { name, version } => tool(name, version).await,
         Commands::Version => {
             println!("Tracer version: {}", env!("CARGO_PKG_VERSION"));
@@ -73,10 +85,20 @@ async fn log(message: String) -> Result<()> {
 }
 
 async fn metrics() -> Result<()> {
-    // how can I let this command run in the background and not block the main thread?
-    // and then execute it for 3 minutes every 20 seconds?
-    let mut metrics_collector = DiskMetricsCollector::new();
-    metrics_collector.collect_disk_usage_metrics().await;
+    let mut collector = DiskMetricsCollector::new();
+
+    let handle = tokio::spawn(async move {
+        let mut interval = interval(Duration::from_secs(2));
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(10) {
+            println!("one tick...  metric collection");
+            interval.tick().await;
+            collector.collect_disk_usage_metrics().await;
+            collector.metrics.send_metrics().await;
+        }
+    });
+
+    handle.await?;
 
     Ok(())
 }

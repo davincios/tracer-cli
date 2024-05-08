@@ -1,8 +1,10 @@
 use crate::metrics::Metrics;
 use sysinfo::{Disks, System};
 
+use super::MetricEntry;
+
 pub struct DiskMetricsCollector {
-    metrics: Metrics,
+    pub metrics: Metrics,
 }
 
 impl DiskMetricsCollector {
@@ -24,16 +26,16 @@ impl DiskMetricsCollector {
             let used_space = total_space - available_space;
             let usage_percentage = (used_space as f64 / total_space as f64) * 100.0;
 
-            let metric = format!(
-                "Disk: {}, Total Space: {} bytes, Used Space: {} bytes, Available Space: {} bytes, Usage: {:.2}%",
+            let metric_message = format!("Disk Usage: {:.2}% for {}", usage_percentage, name);
+
+            self.metrics.add_metric(MetricEntry {
+                message: metric_message,
                 name,
                 total_space,
                 used_space,
                 available_space,
-                usage_percentage
-            );
-
-            self.metrics.add_metric(metric);
+                usage_percentage,
+            });
         }
     }
 }

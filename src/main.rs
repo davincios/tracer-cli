@@ -87,19 +87,17 @@ async fn log(message: String) -> Result<()> {
 async fn metrics() -> Result<()> {
     let mut collector = DiskMetricsCollector::new();
 
-    let handle = tokio::spawn(async move {
+    tokio::spawn(async move {
         let mut interval = interval(Duration::from_secs(2));
         let start = Instant::now();
         while start.elapsed() < Duration::from_secs(10) {
-            println!("one tick...  metric collection");
             interval.tick().await;
-            collector.collect_disk_usage_metrics().await;
-            collector.metrics.send_metrics().await;
+            collector.collect_disk_usage_metrics().await; // Ensure these are async and await them.
+            collector.metrics.send_metrics().await; // Ensure send_metrics is properly awaited.
         }
     });
 
-    handle.await?;
-
+    println!("Metrics collection started in the background.");
     Ok(())
 }
 

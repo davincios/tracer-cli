@@ -1,6 +1,6 @@
 [package]
 name = "tracer"
-version = "0.0.62"
+version = "0.0.64"
 authors = ["Vincent Hus <developers@tracer.bio>"]
 edition = "2018"
 
@@ -27,12 +27,15 @@ tempfile = "3.10.1"
 sysinfo = "0.30.11"
 bstr = "1.9.1"
 log = "0.4.14"
-openssl = { version = "0.10", features = ["vendored"] }
 
 [package.metadata.release]
 sign-tag = true
 disable-publish = false
 
+# Required for cross-compilation in our CI release pipeline
+[dependencies.openssl]
+version = "0.10.59"
+features = ["vendored"]
 
 [dev-dependencies]
 assert_cmd = "2.0.14"

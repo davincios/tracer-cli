@@ -27,7 +27,8 @@ pub async fn pipeline_new_run(config: &TracerAppConfig, msg: &str) -> Result<()>
 
 pub async fn tool_process(config: &TracerAppConfig, tool: &Tool) -> Result<()> {
     let properties = json!({
-        "tool_version": tool.version
+        "tool_version": tool.version,
+        "tool_name": tool.name,
     });
 
     send_event(

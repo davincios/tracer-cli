@@ -87,4 +87,16 @@ mod tests {
         );
         Ok(())
     }
+
+    #[test]
+    fn test_tracer_update() -> Result<()> {
+        // Test 'update'
+        let output_update = run_command(&["update"]).output()?;
+        assert!(
+            output_update.status.success(),
+            "Update command failed: {}",
+            str::from_utf8(&output_update.stderr)?
+        );
+        Ok(())
+    }
 }

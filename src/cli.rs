@@ -19,6 +19,7 @@ pub enum Commands {
     Setup { api_key: String },
     Start,
     Log { message: String },
+    Update,
     Metrics,
     Info,
     Tool { name: String, version: String },

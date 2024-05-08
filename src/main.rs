@@ -16,6 +16,7 @@ async fn main() -> Result<()> {
 
     match cli.command {
         Commands::Setup { api_key } => setup(api_key).await,
+        Commands::Update => update_tracer_cli().await,
         Commands::Start => start().await,
         Commands::Log { message } => log(message).await,
         Commands::Metrics => metrics().await,
@@ -98,5 +99,35 @@ async fn end() -> Result<()> {
 
     metrics().await?;
     pipeline_finish_run(&config).await?;
+    Ok(())
+}
+
+// Import std::process::Command for executing shell commands
+use std::process::Command;
+
+async fn update_tracer_cli() -> Result<()> {
+    println!("Updating Tracer CLI...");
+
+    // Load the configuration to retrieve the API key
+    let config = TracerAppConfig::load_config()?;
+    let api_key = config.api_key;
+
+    // Construct the shell command with the appropriate API key
+    let install_command = format!(
+        "curl -sSL https://raw.githubusercontent.com/davincios/tracer-cli/master/install-tracer.sh | bash -s -- --api-key {} && source ~/.bashrc && tracer help",
+        api_key
+    );
+
+    // Execute the command using the `sh` shell
+    let output = Command::new("sh")
+        .arg("-c")
+        .arg(&install_command)
+        .output()
+        .expect("Failed to execute the update command");
+
+    // Print the standard output and error for debugging purposes
+    println!("{}", String::from_utf8_lossy(&output.stdout));
+    eprintln!("{}", String::from_utf8_lossy(&output.stderr));
+
     Ok(())
 }

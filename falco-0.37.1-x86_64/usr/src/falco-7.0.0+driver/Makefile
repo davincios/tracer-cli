@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: GPL-2.0-only OR MIT
+#
+# Copyright (C) 2023 The Falco Authors.
+#
+# This file is dual licensed under either the MIT or GPL 2. See
+# MIT.txt or GPL.txt for full copies of the license.
+#
+
+falco-y += main.o dynamic_params_table.o fillers_table.o flags_table.o ppm_events.o ppm_fillers.o event_table.o syscall_table64.o ppm_cputime.o ppm_tp.o syscall_ia32_64_map.o
+obj-m += falco.o
+ccflags-y := 
+
+KERNELDIR 		?= /lib/modules/$(shell uname -r)/build
+
+TOP := $(shell pwd)
+all:
+	$(MAKE) -C $(KERNELDIR) M=$(TOP) modules
+
+clean:
+	$(MAKE) -C $(KERNELDIR) M=$(TOP) clean
+
+install: all
+	$(MAKE) -C $(KERNELDIR) M=$(TOP) modules_install

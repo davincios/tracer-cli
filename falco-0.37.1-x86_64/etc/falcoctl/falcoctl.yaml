@@ -1,0 +1,16 @@
+driver:
+    type: "kmod"
+    name: "falco"
+    repos:
+        - "https://download.falco.org/driver"
+    version: "7.0.0+driver"
+    hostroot: "/"
+artifact:
+  follow:
+    every: 6h0m0s
+    falcoVersions: http://localhost:8765/versions
+    refs:
+    - falco-rules:0
+indexes:
+- name: falcosecurity
+  url: https://falcosecurity.github.io/falcoctl/index.yaml

@@ -52,3 +52,6 @@ wget https://github.com/davincios/tracer-cli/releases/download/v0.0.22/tracer-x8
 tar -xzf tracer-x86_64-unknown-linux-gnu.tar.gz
 ./tracer setup <API_KEY>
 ```
+
+# For eBPF Make sure To Install
+sudo apt-get install linux-headers-$(uname -r) llvm clang libbpf-dev libelf-dev gcc-multilib

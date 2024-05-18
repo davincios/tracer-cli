@@ -29,6 +29,7 @@ bstr = "1.9.1"
 log = "0.4.14"
 aya = "0.12.0"
 aya-log = "0.2.0"
+futures = "0.3.30"
 
 [package.metadata.release]
 sign-tag = true

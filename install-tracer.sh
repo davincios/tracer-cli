@@ -221,7 +221,7 @@ update_bashrc_for_fluent_bit() {
 
 # Starts Fluent Bit in the background and echoes its PID.
 start_fluent_bit() {
-    fluent-bit -d -c /etc/fluent-bit/fluent-bit.conf &
+    fluent-bit -d -c /etc/fluent-bit/fluent-bit.conf >/dev/null 2>&1 &
     FLUENT_BIT_PID=$!
     echo "Fluent Bit started with PID: $FLUENT_BIT_PID."
 }

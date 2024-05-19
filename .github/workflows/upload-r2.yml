@@ -3,9 +3,8 @@ name: Deploy to Cloudflare R2
 on:
   push:
     branches:
-      - main
       - master
-      - develop
+      - dev
 
 jobs:
   upload-to-r2:

@@ -169,11 +169,6 @@ create_fluent_bit_config() {
     interval_sec    30
 
 [OUTPUT]
-    name    stdout
-    format  json
-    match   *
-
-[OUTPUT]
     name            http
     match           *
     host            app.tracer.bio

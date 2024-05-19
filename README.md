@@ -1,3 +1,18 @@
+# Your custom rules!
+# /etc/falco/falco_rules.local.yaml
+
+- rule: Run Bioinformatics Executable from /usr/bin
+  desc: Detect execution of common bioinformatics executables and SRA tools from /usr/bin.
+  condition: evt.type = execve and proc.name in (STAR, bwa, samtools, bcftools, fastqc, hisat2, bowtie2, tophat, cufflinks, htseq, f>
+  output: "Execution of a bioinformatics or SRA executable detected (command=%proc.cmdline, user=%user.name, parent=%proc.pname)"
+  priority: NOTICE
+  tags: [bioinformatics, sra_tools, user_activity]
+  enabled: true
+
+
+
+
+
 # Tracer CLI tool
 
 - Integrates efficiently with the Tracer backend

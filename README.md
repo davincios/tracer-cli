@@ -3,11 +3,12 @@
 
 - rule: Run Bioinformatics Executable from /usr/bin
   desc: Detect execution of common bioinformatics executables and SRA tools from /usr/bin.
-  condition: evt.type = execve and proc.name in (STAR, bwa, samtools, bcftools, fastqc, hisat2, bowtie2, tophat, cufflinks, htseq, f>
+  condition: evt.type = execve and proc.name in (STAR, bwa, samtools, bcftools, fastqc, hisat2, bowtie2, tophat, cufflinks, htseq)
   output: "Execution of a bioinformatics or SRA executable detected (command=%proc.cmdline, user=%user.name, parent=%proc.pname)"
   priority: NOTICE
   tags: [bioinformatics, sra_tools, user_activity]
   enabled: true
+
 
 
 

@@ -3,8 +3,9 @@
 # Check if an API key was provided
 if [ "$#" -ne 2 ] || [ "$1" != "--api-key" ]; then
     echo ""
-    echo "Welcome to Tracer"
-    echo "To complete the installation, please create an API key at https://app.tracer.bio and provide it as an argument"
+    echo "Welcome to Tracer. To complete the installation, please create an API key at:"
+    echo "https://app.tracer.bio"
+    echo "and provide it as an argument to this script using the --api-key flag"
     echo ""
     exit 1
 fi

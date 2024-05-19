@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if an API key was provided
-if [ "$#" -ne 2 ] || [ "$1" != "--api-key" ]; then
+if [ "$#" -ne 1 ]; then
     echo ""
     echo "Welcome to Tracer. To complete the installation, please create an API key at:"
     echo "https://app.tracer.bio"
@@ -10,7 +10,7 @@ if [ "$#" -ne 2 ] || [ "$1" != "--api-key" ]; then
     exit 1
 fi
 
-API_KEY=$2
+API_KEY=$1
 
 # Define the version of the tracer you want to download
 TRACER_VERSION="v0.0.70"

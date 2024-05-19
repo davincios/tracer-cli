@@ -2,8 +2,10 @@
 
 # Check if an API key was provided
 if [ "$#" -ne 2 ] || [ "$1" != "--api-key" ]; then
-    echo "Usage: $0 --api-key <API_KEY>"
+    echo ""
+    echo "Usage: --api-key <API_KEY>"
     echo "Please create an API key at https://app.tracer.bio and provide it as an argument"
+    echo ""
     exit 1
 fi
 

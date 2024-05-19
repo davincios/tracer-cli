@@ -5,7 +5,7 @@ if [ "$#" -ne 2 ] || [ "$1" != "--api-key" ]; then
     echo ""
     echo "Welcome to Tracer. To complete the installation, please create an API key at:"
     echo "https://app.tracer.bio"
-    echo "and provide it as an argument to this script using the --api-key flag"
+    echo "and follow the brief instructions during sign-up"
     echo ""
     exit 1
 fi

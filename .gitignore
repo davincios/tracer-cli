@@ -23,3 +23,5 @@ tracer.tar.gz
 
 responses/*
 responses
+
+.github/workflows/r2-script.yml

@@ -3,8 +3,9 @@
 # Check if an API key was provided
 if [ "$#" -ne 2 ] || [ "$1" != "--api-key" ]; then
     echo ""
-    echo "Usage: --api-key <API_KEY>"
-    echo "Please create an API key at https://app.tracer.bio and provide it as an argument"
+    echo "Welcome to Tracer"
+    echo "To complete the installation, please create an API key at https://app.tracer.bio and provide it as an argument"
+    echo "/bin/bash -c \"$(curl --proto '=https' --tlsv1.2 -sSf https://setup.tracer.bio)\" --api-key <YOUR_API_KEY>"
     echo ""
     exit 1
 fi

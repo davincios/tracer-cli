@@ -1,0 +1,27 @@
+# /etc/falco/falco_rules.local.yaml
+- list: bioinformatics_executables
+  items:
+    [
+      "STAR",
+      "bwa",
+      "samtools",
+      "bedtools",
+      "bamCoverage",
+      "multiqc",
+      "sam-dump",
+      "bcftools",
+      "fastqc",
+      "hisat2",
+      "bowtie2",
+      "tophat",
+      "cufflinks",
+      "htseq",
+    ]
+
+- rule: Run Bioinformatics Executable
+  desc: Detect execution of common bioinformatics executables and SRA tools.
+  condition: evt.type = execve and proc.name in (bioinformatics_executables)
+  output: "Execution of a bioinformatics or SRA executable detected (command=%proc.cmdline, user=%user.name, parent=%proc.pname)"
+  priority: WARNING
+  tags: [bioinformatics, sra_tools, user_activity]
+  enabled: true

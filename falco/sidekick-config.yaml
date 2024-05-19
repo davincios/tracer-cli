@@ -1,0 +1,7 @@
+# /etc/falcosidekick/config.yaml
+
+# Webhook configuration
+webhook:
+  address: https://app.tracer.bio/api/fluent-bit-webhook-without-logs
+  customheaders:
+    x-api-key: hg7xvhZzvwR1xONiLmAwk

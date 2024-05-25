@@ -61,8 +61,8 @@ if [ -d "/etc/tracer" ]; then
 fi
 
 # Create directory /etc/tracer and copy the binary there
-sudo mkdir -p /etc/tracer/
-sudo cp tracer /etc/tracer/tracer
+sudo mkdir -p ~/.tracer
+sudo cp tracer ~/.tracer/tracer
 
 # Execute setup with the API key
 ./tracer setup "$API_KEY"

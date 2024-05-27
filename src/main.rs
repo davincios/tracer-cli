@@ -7,7 +7,7 @@ use crate::cli::{Cli, Commands};
 
 use tracer::{
     log_message, metrics::DiskMetricsCollector, pipeline_finish_run, pipeline_new_run,
-    setup_tracer, tool_process, Tool, TracerAppConfig,
+    setup_fluent_bit, setup_tracer, tool_process, Tool, TracerAppConfig,
 };
 
 #[tokio::main]
@@ -58,8 +58,7 @@ async fn setup(api_key: String) -> Result<()> {
     assert_eq!(api_key.clone(), config.api_key);
     metrics().await?;
 
-    setup_fluent_bit(api_key.clone());
-
+    setup_fluent_bit(api_key.clone(), &config).await?;
 
     Ok(())
 }

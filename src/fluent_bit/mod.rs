@@ -2,6 +2,7 @@
 
 use anyhow::{Context, Result};
 use tokio::fs;
+use tokio::process::Command;
 
 use crate::methods::{send_event, EventStatus};
 use crate::ConfigPaths;
@@ -59,6 +60,25 @@ fn generate_fluent_bit_conf(api_key: &str) -> String {
     )
 }
 
+pub async fn start_fluent_bit(tracer_config_dir_path: &std::path::Path) -> Result<()> {
+    // Path to the generated fluent-bit.conf file
+    let tracer_config_file_path = tracer_config_dir_path.join("fluent-bit.conf");
+
+    // Start Fluent Bit in the background
+    let mut child = Command::new("fluent-bit")
+        .arg("-c")
+        .arg(tracer_config_file_path)
+        .spawn()
+        .context("Failed to start Fluent Bit")?;
+
+    // Detach the process to run in the background
+    tokio::spawn(async move {
+        let _ = child.wait().await;
+    });
+
+    Ok(())
+}
+
 pub async fn setup_fluent_bit(api_key: String, config: &TracerAppConfig) -> Result<()> {
     let tracer_config_dir_path = ConfigPaths::tracer_config_dir_path();
 
@@ -87,6 +107,9 @@ pub async fn setup_fluent_bit(api_key: String, config: &TracerAppConfig) -> Resu
     )
     .await?;
 
+    // Start Fluent Bit
+    start_fluent_bit(&tracer_config_dir_path).await?;
+
     Ok(())
 }
 
@@ -97,10 +120,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_fluent_bit_tracer_success() -> Result<()> {
-        let api_key = "test_api_key".to_string(); // Replace with an appropriate test API key
         let config = TracerAppConfig::load_config()?; // Assuming load_config returns Result<TracerAppConfig>
 
-        let result = setup_fluent_bit(api_key, &config).await;
+        let result = setup_fluent_bit(config.api_key.clone(), &config).await;
 
         if let Err(ref e) = result {
             println!("Setup failed with error: {}", e);

@@ -13,7 +13,7 @@ fi
 API_KEY=$1
 
 # Define the version of the tracer you want to download
-TRACER_VERSION="v0.0.70"
+TRACER_VERSION="v0.0.71"
 TRACER_LINUX_URL="https://github.com/davincios/tracer-cli/releases/download/${TRACER_VERSION}/tracer-x86_64-unknown-linux-gnu.tar.gz"
 TRACER_MACOS_AARCH_URL="https://github.com/davincios/tracer-cli/releases/download/${TRACER_VERSION}/tracer-aarch64-apple-darwin.tar.gz"
 TRACER_MACOS_UNIVERSAL_URL="https://github.com/davincios/tracer-cli/releases/download/${TRACER_VERSION}/tracer-universal-apple-darwin.tar.gz"
@@ -129,11 +129,11 @@ install_fluent_bit() {
 
     # Set the Fluent Bit path
     FLUENT_BIT_PATH="/opt/fluent-bit/bin"
-    
+
     # Add Fluent Bit to the PATH in .bashrc and .zshrc
     update_config "$BASH_CONFIG" "$FLUENT_BIT_PATH" "fluent-bit"
     update_config "$ZSH_CONFIG" "$FLUENT_BIT_PATH" "fluent-bit"
-    
+
     # Immediately update the PATH for the current session
     export PATH=$PATH:$FLUENT_BIT_PATH
 }
@@ -143,7 +143,7 @@ main() {
     # installation
     send_event "installation_start" "Start tracer installation"
     install_fluent_bit
-    source ~/.bashrc  # Source .bashrc to apply changes
+    source ~/.bashrc # Source .bashrc to apply changes
     tracer help
     send_event "installation_finished" "Installation completed"
 }

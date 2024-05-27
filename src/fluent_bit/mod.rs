@@ -60,8 +60,10 @@ fn generate_fluent_bit_conf(api_key: &str) -> String {
     )
 }
 
-pub async fn start_fluent_bit(tracer_config_dir_path: &std::path::Path) -> Result<()> {
+pub async fn start_fluent_bit() -> Result<()> {
     // Path to the generated fluent-bit.conf file
+    let tracer_config_dir_path = ConfigPaths::tracer_config_dir_path();
+
     let tracer_config_file_path = tracer_config_dir_path.join("fluent-bit.conf");
 
     // Start Fluent Bit in the background
@@ -106,9 +108,6 @@ pub async fn setup_fluent_bit(api_key: String, config: &TracerAppConfig) -> Resu
         false,
     )
     .await?;
-
-    // Start Fluent Bit
-    start_fluent_bit(&tracer_config_dir_path).await?;
 
     Ok(())
 }

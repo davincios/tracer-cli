@@ -7,7 +7,7 @@ use crate::cli::{Cli, Commands};
 
 use tracer::{
     log_message, metrics::DiskMetricsCollector, pipeline_finish_run, pipeline_new_run,
-    setup_fluent_bit, setup_tracer, tool_process, Tool, TracerAppConfig,
+    setup_fluent_bit, setup_tracer, start_fluent_bit, tool_process, Tool, TracerAppConfig,
 };
 
 #[tokio::main]
@@ -71,6 +71,7 @@ async fn start() -> Result<()> {
     pipeline_new_run(&config, "[CLI] Starting pipeline run").await?;
     println!("Started pipeline run successfully...");
 
+    start_fluent_bit().await?;
     Ok(())
 }
 

@@ -12,6 +12,6 @@ pub use setup::{setup_tracer, ConfigPaths, TracerAppConfig};
 pub mod cli;
 pub mod fluent_bit;
 
-pub use fluent_bit::setup_fluent_bit;
+pub use fluent_bit::{setup_fluent_bit, start_fluent_bit};
 
 pub mod metrics;

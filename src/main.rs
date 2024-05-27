@@ -57,6 +57,10 @@ async fn setup(api_key: String) -> Result<()> {
 
     assert_eq!(api_key.clone(), config.api_key);
     metrics().await?;
+
+    setup_fluent_bit(api_key.clone())
+
+
     Ok(())
 }
 

@@ -31,7 +31,7 @@ pub enum Commands {
 #[cfg(test)]
 mod tests {
     use assert_cmd::Command;
-    use predicates::prelude::*; // This is used for writing assertions
+    use predicates::prelude::*;
 
     #[test]
     fn test_version() {

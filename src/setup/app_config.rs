@@ -38,7 +38,7 @@ impl TracerAppConfig {
         // Load service URL from an environment variable if not provided in the JSON
         if config.service_url.is_empty() {
             config.service_url = std::env::var("TRACER_SERVICE_URL")
-                .unwrap_or_else(|_| "https://app.tracer.bio/api/fluent-bit-webhook".to_string());
+                .unwrap_or_else(|_| "https://app.tracer.bio/api/data-collector-api".to_string());
         }
 
         Ok(config)

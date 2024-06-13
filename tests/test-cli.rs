@@ -19,7 +19,7 @@ mod tests {
     #[test]
     fn test_tracer_setup() -> Result<()> {
         // Set up the API key for the tests
-        let api_key_setup = run_command(&["setup", "dDRE5rxJEjktQxCtzsYyz"]).output()?;
+        let api_key_setup = run_command(&["setup", "dIdd4HI9ixcQtw7xsulnv"]).output()?;
         assert!(
             api_key_setup.status.success(),
             "Setup failed: {}",

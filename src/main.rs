@@ -7,7 +7,7 @@ use crate::cli::{Cli, Commands};
 
 use tracer::{
     log_message, metrics::DiskMetricsCollector, pipeline_finish_run, pipeline_new_run,
-    setup_fluent_bit, setup_tracer, start_fluent_bit, tool_process, Tool, TracerAppConfig,
+    setup_tracer, tool_process, Tool, TracerAppConfig,
 };
 
 #[tokio::main]
@@ -58,8 +58,6 @@ async fn setup(api_key: String) -> Result<()> {
     assert_eq!(api_key.clone(), config.api_key);
     metrics().await?;
 
-    setup_fluent_bit(api_key.clone(), &config).await?;
-
     Ok(())
 }
 
@@ -71,7 +69,6 @@ async fn start() -> Result<()> {
     pipeline_new_run(&config, "[CLI] Starting pipeline run").await?;
     println!("Started pipeline run successfully...");
 
-    start_fluent_bit().await?;
     Ok(())
 }
 

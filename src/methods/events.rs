@@ -13,7 +13,6 @@ pub enum EventStatus {
     ToolExecution,
     InstallationFinished,
     MetricEvent,
-    FluentBitTemplateMoved,
 }
 
 impl EventStatus {
@@ -25,7 +24,6 @@ impl EventStatus {
             EventStatus::ToolExecution => "tool_execution",
             EventStatus::InstallationFinished => "installation_finished",
             EventStatus::MetricEvent => "metric_event",
-            EventStatus::FluentBitTemplateMoved => "fluent_bit_template_moved",
         }
     }
 }

@@ -1,3 +1,8 @@
+# 
+- Use sed or awk linux tool --> to use regexp and change in toml.
+- Post build.
+- To automatically make the latest tag. 
+
 # Tracer CLI tool
 
 - Integrates efficiently with the Tracer backend
